@@ -1329,6 +1329,16 @@ class Game {
             this.addActiveEffect('unstableDice', '불안정 주사위', '🎲↔️', 3, 'debuff');
             this.addLog('event', `🎲↔️ 3턴간 50% 반전!`);
             this.movePlayer(dice);
+        } else if (r.goalShield) {
+            // 골 보호막 (N턴 후 해제)
+            this.addActiveEffect('goalShield', '골 보호막', '🛡️', r.goalShield, 'buff');
+            this.addLog('event', `🛡️ ${r.goalShield}턴간 골 보호!`);
+            this.movePlayer(dice);
+        } else if (r.timeBomb) {
+            // 시간 폭탄 (N턴 후 폭발)
+            this.addActiveEffect('timeBomb', '시간 폭탄', '💣⏰', r.timeBomb, 'debuff');
+            this.addLog('event', `💣⏰ ${r.timeBomb}턴 후 폭발! (3칸 후퇴)`);
+            this.movePlayer(dice);
         } else {
             this.movePlayer(dice);
         }
@@ -1581,9 +1591,18 @@ class Game {
                 expired.push(e);
             }
         });
-        // 만료된 효과 제거
+        // 만료된 효과 처리
         expired.forEach(e => {
-            this.addLog('system', `${e.icon} ${e.name} 효과 종료`);
+            // 만료 시 효과 발동
+            if (e.id === 'timeBomb') {
+                this.position = Math.max(0, this.position - 3);
+                this.updateBoard();
+                this.addLog('event', '💣 폭발! 3칸 후퇴!');
+            } else if (e.id === 'goalShield') {
+                this.addLog('event', '🛡️ 골 보호막 해제!');
+            } else {
+                this.addLog('system', `${e.icon} ${e.name} 효과 종료`);
+            }
             this.activeEffects = this.activeEffects.filter(ae => ae.id !== e.id);
         });
         this.updateActiveEffectsUI();
