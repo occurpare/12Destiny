@@ -1655,13 +1655,33 @@ class Game {
         });
         // 만료된 효과 처리
         expired.forEach(e => {
-            // 만료 시 효과 발동
+            // 만료 시 효과 발동 (팝업 포함)
             if (e.id === 'timeBomb') {
                 this.position = Math.max(0, this.position - 3);
                 this.updateBoard();
-                this.addLog('event', '💣 폭발! 3칸 후퇴!');
+                this.showEvent('💣', '시간 폭탄 폭발! 3칸 후퇴!', () => {
+                    this.addLog('event', '💣 폭발! 3칸 후퇴!');
+                });
             } else if (e.id === 'goalShield') {
-                this.addLog('event', '🛡️ 골 보호막 해제!');
+                this.showEvent('🛡️', '골 보호막이 사라졌어!', () => {
+                    this.addLog('event', '🛡️ 골 보호막 해제!');
+                });
+            } else if (e.id === 'movePenalty') {
+                this.showEvent('🥾', '발이 가벼워졌어! 페널티 해제!', () => {
+                    this.addLog('system', '🥾 이동 페널티 종료');
+                });
+            } else if (e.id === 'blockPositive') {
+                this.showEvent('✨', '마법 억제 해제! 긍정 이벤트 가능!', () => {
+                    this.addLog('system', '✨ 마법 억제 종료');
+                });
+            } else if (e.id === 'lucky') {
+                this.showEvent('🍀', '럭키 모드 종료!', () => {
+                    this.addLog('system', '🍀 럭키 모드 종료');
+                });
+            } else if (e.id === 'blind') {
+                this.showEvent('🙈', '블라인드 해제! 이제 보여!', () => {
+                    this.addLog('system', '🙈 블라인드 종료');
+                });
             } else {
                 this.addLog('system', `${e.icon} ${e.name} 효과 종료`);
             }
@@ -1680,12 +1700,36 @@ class Game {
         }
         
         this.elements.activeEffects.innerHTML = this.activeEffects.map(e => `
-            <div class="effect-item ${e.type}">
+            <div class="effect-item ${e.type}" data-effect-id="${e.id}" title="${this.getEffectDescription(e.id)}">
                 <span class="effect-icon">${e.icon}</span>
                 <span class="effect-name">${e.name}</span>
                 <span class="effect-turns">${e.turnsLeft}턴</span>
             </div>
         `).join('');
+    }
+    
+    // 이펙트 설명 가져오기
+    getEffectDescription(effectId) {
+        const descriptions = {
+            movePenalty: '毎 턴 이동 -1',
+            blockPositive: '긍정적 이벤트 발동 안 됨',
+            diceOdd: '주사위가 홀수만 나옴',
+            reverseNext: '주사위 결과가 반대로',
+            unstableDice: '50% 확률로 주사위 반전',
+            goalShield: '골 도달 시 보호됨',
+            timeBomb: '만료 시 3칸 후퇴',
+            nextBonus: '다음 주사위에 보너스/페널티 적용',
+            nextMax: '다음 주사위 최대값 제한',
+            nextDiceLimit: '다음 주사위 범위 제한',
+            doubleNext: '다음 이동 두 배',
+            lucky: '긍정적 이벤트 확률 증가',
+            shield: '부정적 효과 1회 차단',
+            reverseMode: '후퇴가 전진으로 변경',
+            blind: '주사위 결과 안 보임',
+            hidden: '보드 상태 안 보임',
+            noTurnCount: '이번 턴 카운트 제외'
+        };
+        return descriptions[effectId] || '효과 설명 없음';
     }
     
     // ==================== 미니게임 ====================
