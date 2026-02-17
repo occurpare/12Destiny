@@ -1904,3 +1904,64 @@ body {
     transform: translateY(0);
 }
 
+
+/* ============================================ */
+/* 가로 레이아웃 */
+/* ============================================ */
+
+.main-layout {
+    display: flex;
+    gap: 24px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.left-panel {
+    flex: 1;
+    min-width: 300px;
+}
+
+.right-panel {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* 좌측 패널 내 스타일 */
+.left-panel .status-bar {
+    margin-bottom: 16px;
+}
+
+.left-panel .status-summary {
+    margin-top: 16px;
+}
+
+/* 우측 패널 내 스타일 */
+.right-panel .dice-area {
+    margin-bottom: 0;
+}
+
+.right-panel .log-area {
+    flex: 1;
+    min-height: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .main-layout {
+        flex-direction: column;
+    }
+    
+    .left-panel, .right-panel {
+        min-width: 100%;
+    }
+    
+    .right-panel .log-area {
+        max-height: 200px;
+    }
+}

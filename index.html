@@ -102,67 +102,74 @@
                 <h1>🎲 12 DICE 🎲</h1>
                 <button class="help-btn" id="helpBtn" title="게임 규칙">❓</button>
             </div>
-            <div class="status-bar">
-                <div class="turn-counter">턴: <span id="currentTurn">1</span>/5</div>
-                <div class="position">위치: <span id="currentPosition">0</span>칸</div>
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                        <span class="progress-text" id="progressText">0%</span>
+        </div>
+
+        <!-- 메인 레이아웃: 좌측 보드 / 우측 주사위+로그 -->
+        <div class="main-layout">
+            <!-- 왼쪽: 게임 보드 -->
+            <div class="left-panel">
+                <div class="status-bar">
+                    <div class="turn-counter">턴: <span id="currentTurn">1</span>/5</div>
+                    <div class="position">위치: <span id="currentPosition">0</span>칸</div>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                            <span class="progress-text" id="progressText">0%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="board" id="board"></div>
+                <!-- 현재 상태 요약 -->
+                <div class="status-summary" id="statusSummary">
+                    <div class="summary-item">
+                        <span class="summary-label">🎯 남은 거리</span>
+                        <span class="summary-value" id="distanceLeft">12칸</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">📊 발동 확률</span>
+                        <span class="summary-value" id="eventChance">92%</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">📜 이벤트</span>
+                        <span class="summary-value" id="eventCount">0회</span>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 게임 보드 -->
-        <div class="board" id="board"></div>
+            <!-- 오른쪽: 주사위 + 이벤트 로그 -->
+            <div class="right-panel">
+                <!-- 주사위 영역 -->
+                <div class="dice-area">
+                    <div class="dice-display" id="diceDisplay">
+                        <span id="diceValue">?</span>
+                    </div>
+                    <div class="dice-info" id="diceInfo">
+                        <span class="dice-type" id="diceType">기본 주사위 (1~6)</span>
+                    </div>
+                </div>
 
-        <!-- 주사위 영역 -->
-        <div class="dice-area">
-            <div class="dice-display" id="diceDisplay">
-                <span id="diceValue">?</span>
-            </div>
-            <div class="dice-info" id="diceInfo">
-                <span class="dice-type" id="diceType">기본 주사위 (1~6)</span>
-            </div>
-        </div>
+                <!-- 이벤트 영역 -->
+                <div class="event-area hidden" id="eventArea">
+                    <div class="event-content" id="eventContent"></div>
+                    <div class="tap-area hidden" id="tapArea">
+                        <div class="tap-button" id="tapButton">연타하세요!!</div>
+                        <div class="tap-progress">
+                            <div class="tap-bar" id="tapBar"></div>
+                        </div>
+                    </div>
+                    <div class="choice-area hidden" id="choiceArea"></div>
+                </div>
 
-        <!-- 현재 상태 요약 -->
-        <div class="status-summary" id="statusSummary">
-            <div class="summary-item">
-                <span class="summary-label">🎯 남은 거리</span>
-                <span class="summary-value" id="distanceLeft">12칸</span>
-            </div>
-            <div class="summary-item">
-                <span class="summary-label">📊 발동 확률</span>
-                <span class="summary-value" id="eventChance">92%</span>
-            </div>
-            <div class="summary-item">
-                <span class="summary-label">📜 이벤트</span>
-                <span class="summary-value" id="eventCount">0회</span>
-            </div>
-        </div>
+                <!-- 게임 로그 -->
+                <div class="log-area" id="logArea"></div>
 
-        <!-- 게임 로그 -->
-        <div class="log-area" id="logArea"></div>
-
-        <!-- 이벤트 영역 -->
-        <div class="event-area hidden" id="eventArea">
-            <div class="event-content" id="eventContent"></div>
-            <div class="tap-area hidden" id="tapArea">
-                <div class="tap-button" id="tapButton">연타하세요!!</div>
-                <div class="tap-progress">
-                    <div class="tap-bar" id="tapBar"></div>
+                <!-- 버튼 영역 -->
+                <div class="button-area">
+                    <button class="roll-button" id="rollButton">🎲 주사위 굴리기</button>
+                    <button class="history-btn" id="historyBtn" title="이벤트 기록">📜 기록</button>
+                    <button class="restart-button hidden" id="restartButton">🔄 다시 시작</button>
                 </div>
             </div>
-            <div class="choice-area hidden" id="choiceArea"></div>
-        </div>
-
-        <!-- 버튼 영역 -->
-        <div class="button-area">
-            <button class="roll-button" id="rollButton">🎲 주사위 굴리기</button>
-            <button class="history-btn" id="historyBtn" title="이벤트 기록">📜 기록</button>
-            <button class="restart-button hidden" id="restartButton">🔄 다시 시작</button>
         </div>
 
         <!-- 결과 화면 -->
