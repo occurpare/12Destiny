@@ -1014,9 +1014,12 @@ class Game {
     // ==================== 이밴트 선택 (밸런스 v11 - 다양성 강화) ====================
     
     selectEvent(diceValue) {
+        console.log('selectEvent 호출됨, position:', this.position, 'dice:', diceValue, 'turn:', this.turn);
         const lib = this.getEventLibrary();
         const all = [...lib.positive, ...lib.neutral, ...lib.negative, ...lib.despair, ...lib.special,
                      ...lib.early, ...lib.turnPressure, ...lib.curse, ...lib.blocker];
+        
+        console.log('전체 이벤트 수:', all.length);
         
         // 최근 5개 이벤트는 제외 (다양성 강화)
         const recentIds = this.eventHistory.slice(-5);
@@ -1024,6 +1027,11 @@ class Game {
             if (recentIds.includes(e.id)) return false; // 최근 이벤트 제외
             try { return e.cond(this.position, diceValue, this.turn); } catch { return false; }
         });
+        
+        console.log('매칭된 이벤트 수:', matching.length);
+        if (matching.length > 0) {
+            console.log('첫 번째 매칭:', matching[0].id, matching[0].name);
+        }
         
         if (matching.length === 0) return null;
         
@@ -1106,16 +1114,21 @@ class Game {
     // ==================== 이밴트 실행 ====================
     
     executeEvent(event, diceValue) {
+        console.log('⚡ executeEvent 호출됨:', event.id, event.name);
         this.lastEventId = event.id;
         this.eventHistory.push(event.id);
         const msg = typeof event.msg === 'function' ? event.msg(diceValue) : event.msg;
+        console.log('이벤트 메시지:', msg);
         
         if (event.choices) {
             this.showChoices(event, diceValue, msg);
             return;
         }
         
-        if (event.fx(diceValue).miniGame === 'tap' || event.fx(diceValue).miniGame === 'boss') {
+        const fxResult = event.fx(diceValue);
+        console.log('fx 결과:', fxResult);
+        
+        if (fxResult.miniGame === 'tap' || fxResult.miniGame === 'boss') {
             this.startTapGame(diceValue);
             return;
         }
@@ -1324,16 +1337,18 @@ class Game {
     }
     
     onDiceRolled(diceValue) {
+        console.log('🎲 onDiceRolled 호출됨, diceValue:', diceValue);
         this.lastDiceValue = diceValue;
         this.updateDiceInfo();
         
         const event = this.selectEvent(diceValue);
+        console.log('선택된 이벤트:', event ? `${event.id} - ${event.name}` : 'null');
         
         if (event) {
             this.addLog('player', `🎲 ${diceValue}!`);
             this.executeEvent(event, diceValue);
         } else {
-            this.addLog('player', `${diceValue}! (이밴트 없음)`);
+            this.addLog('player', `${diceValue}! (이벤트 없음)`);
             this.movePlayer(diceValue);
         }
     }
