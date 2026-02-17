@@ -2201,3 +2201,71 @@ body {
     50% { transform: scale(1.3); box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
     100% { transform: scale(1); }
 }
+
+/* ============================================ */
+/* 지속 효과 UI */
+/* ============================================ */
+
+.active-effects {
+    margin-top: 16px;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    min-height: 60px;
+}
+
+.no-effects {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding: 12px;
+}
+
+.effect-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    animation: effectFadeIn 0.3s ease-out;
+}
+
+.effect-item:last-child {
+    margin-bottom: 0;
+}
+
+/* 버프 효과 (긍정적) */
+.effect-item.buff {
+    border-left: 3px solid #4ade80;
+}
+
+/* 디버프 효과 (부정적) */
+.effect-item.debuff {
+    border-left: 3px solid #f87171;
+}
+
+.effect-icon {
+    font-size: 1.2rem;
+}
+
+.effect-name {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.effect-turns {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    background: rgba(233, 69, 96, 0.2);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+@keyframes effectFadeIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}

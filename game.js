@@ -23,6 +23,9 @@ class Game {
         this.totalRolls = 0;
         this.extendedGoal = false;
         
+        // 지속 효과 추적
+        this.activeEffects = []; // [{id, name, icon, turnsLeft, type}]
+        
         this.elements = {};
         this.taps = 0;
         this.targetTaps = 0;
@@ -51,7 +54,8 @@ class Game {
             resultIcon: document.getElementById('resultIcon'),
             resultText: document.getElementById('resultText'),
             resultDetail: document.getElementById('resultDetail'),
-            resultButton: document.getElementById('resultButton')
+            resultButton: document.getElementById('resultButton'),
+            activeEffects: document.getElementById('activeEffects')
         };
         
         this.elements.rollButton.addEventListener('click', () => this.rollDice());
@@ -1471,6 +1475,9 @@ class Game {
     }
     
     endTurn() {
+        // 지속 효과 턴 감소
+        this.tickActiveEffects();
+        
         this.turn++;
         if (this.turn > this.maxTurns) { this.defeat(); return; }
         this.updateStatus();
@@ -1518,6 +1525,61 @@ class Game {
             const display = previews.slice(0, 3);
             display.forEach(p => this.addLog('system', p));
         }
+    }
+    
+    // ==================== 지속 효과 관리 ====================
+    
+    // 지속 효과 추가
+    addActiveEffect(id, name, icon, turns, type = 'buff') {
+        // 이미 있는 효과면 턴 갱신
+        const existing = this.activeEffects.find(e => e.id === id);
+        if (existing) {
+            existing.turnsLeft = turns;
+        } else {
+            this.activeEffects.push({ id, name, icon, turnsLeft: turns, type });
+        }
+        this.updateActiveEffectsUI();
+    }
+    
+    // 지속 효과 제거
+    removeActiveEffect(id) {
+        this.activeEffects = this.activeEffects.filter(e => e.id !== id);
+        this.updateActiveEffectsUI();
+    }
+    
+    // 지속 효과 턴 감소
+    tickActiveEffects() {
+        const expired = [];
+        this.activeEffects.forEach(e => {
+            e.turnsLeft--;
+            if (e.turnsLeft <= 0) {
+                expired.push(e);
+            }
+        });
+        // 만료된 효과 제거
+        expired.forEach(e => {
+            this.addLog('system', `${e.icon} ${e.name} 효과 종료`);
+            this.activeEffects = this.activeEffects.filter(ae => ae.id !== e.id);
+        });
+        this.updateActiveEffectsUI();
+    }
+    
+    // 지속 효과 UI 업데이트
+    updateActiveEffectsUI() {
+        if (!this.elements.activeEffects) return;
+        
+        if (this.activeEffects.length === 0) {
+            this.elements.activeEffects.innerHTML = '<div class="no-effects">현재 활성 효과 없음</div>';
+            return;
+        }
+        
+        this.elements.activeEffects.innerHTML = this.activeEffects.map(e => `
+            <div class="effect-item ${e.type}">
+                <span class="effect-icon">${e.icon}</span>
+                <span class="effect-name">${e.name}</span>
+                <span class="effect-turns">${e.turnsLeft}턴</span>
+            </div>
+        `).join('');
     }
     
     // ==================== 미니게임 ====================
