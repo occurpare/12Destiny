@@ -1915,16 +1915,27 @@ body {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 16px;
 }
 
 .left-panel {
     flex: 1;
-    min-width: 300px;
+    min-width: 320px;
+    max-width: 500px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 32px var(--shadow-color);
 }
 
 .right-panel {
     flex: 1;
-    min-width: 300px;
+    min-width: 320px;
+    max-width: 500px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 32px var(--shadow-color);
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -1933,32 +1944,60 @@ body {
 /* 좌측 패널 내 스타일 */
 .left-panel .status-bar {
     margin-bottom: 16px;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+}
+
+.left-panel .board {
+    margin: 16px 0;
 }
 
 .left-panel .status-summary {
     margin-top: 16px;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
 }
 
 /* 우측 패널 내 스타일 */
 .right-panel .dice-area {
     margin-bottom: 0;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+}
+
+.right-panel .event-area {
+    margin-bottom: 0;
 }
 
 .right-panel .log-area {
     flex: 1;
-    min-height: 200px;
-    max-height: 300px;
+    min-height: 150px;
+    max-height: 250px;
     overflow-y: auto;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.right-panel .button-area {
+    margin-top: auto;
+    padding-top: 8px;
 }
 
 /* 반응형 */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .main-layout {
         flex-direction: column;
+        align-items: center;
     }
     
     .left-panel, .right-panel {
         min-width: 100%;
+        max-width: 100%;
+        width: 100%;
     }
     
     .right-panel .log-area {
