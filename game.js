@@ -1339,6 +1339,68 @@ class Game {
             this.addActiveEffect('timeBomb', '시간 폭탄', '💣⏰', r.timeBomb, 'debuff');
             this.addLog('event', `💣⏰ ${r.timeBomb}턴 후 폭발! (3칸 후퇴)`);
             this.movePlayer(dice);
+        } else if (r.nextBonus !== undefined) {
+            // 다음 턴 주사위 보너스/페널티
+            const turns = r.nextBonus2 ? 2 : 1;
+            const sign = r.nextBonus > 0 ? '+' : '';
+            const type = r.nextBonus > 0 ? 'buff' : 'debuff';
+            this.addActiveEffect('nextBonus', `주사위 ${sign}${r.nextBonus}`, '🎯', turns, type);
+            this.addLog('event', `🎯 다음 ${turns}턴 주사위 ${sign}${r.nextBonus}!`);
+            this.movePlayer(dice);
+        } else if (r.nextMax) {
+            // 다음 턴 주사위 최대값 제한
+            this.addActiveEffect('nextMax', `주사위 최대 ${r.nextMax}`, '🎲⬇️', 1, 'debuff');
+            this.addLog('event', `🎲⬇️ 다음 턴 최대 ${r.nextMax}!`);
+            this.movePlayer(dice);
+        } else if (r.nextDiceLimit) {
+            // 다음 턴 주사위 범위 제한
+            this.addActiveEffect('nextDiceLimit', `주사위 ${r.nextDiceLimit.min}~${r.nextDiceLimit.max}`, '🎲🔒', 1, 'debuff');
+            this.addLog('event', `🎲🔒 다음 턴 ${r.nextDiceLimit.min}~${r.nextDiceLimit.max}만!`);
+            this.movePlayer(dice);
+        } else if (r.doubleNext) {
+            // 다음 턴 두 배
+            this.addActiveEffect('doubleNext', '다음 턴 두 배', '✖️2️⃣', 1, 'buff');
+            this.addLog('event', `✖️2️⃣ 다음 턴 두 배!`);
+            this.movePlayer(dice);
+        } else if (r.lucky) {
+            // 럭키 모드
+            this.addActiveEffect('lucky', '럭키 모드', '🍀', 3, 'buff');
+            this.addLog('event', `🍀 3턴간 럭키!`);
+            this.movePlayer(dice);
+        } else if (r.shield) {
+            // 실드
+            this.addActiveEffect('shield', '실드', '🛡️', r.shield, 'buff');
+            this.addLog('event', `🛡️ ${r.shield}회 보호!`);
+            this.movePlayer(dice);
+        } else if (r.reverseMode) {
+            // 역전 모드
+            this.addActiveEffect('reverseMode', '역전 모드', '🔄', r.reverseMode, 'buff');
+            this.addLog('event', `🔄 ${r.reverseMode}턴간 역전!`);
+            this.movePlayer(dice);
+        } else if (r.blind) {
+            // 블라인드
+            this.addActiveEffect('blind', '블라인드', '🙈', r.blind, 'debuff');
+            this.addLog('event', `🙈 ${r.blind}턴간 블라인드!`);
+            this.movePlayer(dice);
+        } else if (r.hidden) {
+            // 숨김 모드
+            const turns = typeof r.hidden === 'number' ? r.hidden : 2;
+            this.addActiveEffect('hidden', '숨김 모드', '👁️❌', turns, 'debuff');
+            this.addLog('event', `👁️❌ ${turns}턴간 숨김!`);
+            this.movePlayer(dice);
+        } else if (r.noMove) {
+            // 이동 없음
+            this.addLog('event', `🚫 이동 없이 턴 소모!`);
+            this.endTurn();
+        } else if (r.noTurnCount) {
+            // 턴 카운트 안 함
+            this.addActiveEffect('noTurnCount', '턴 카운트 안 함', '⏭️', 1, 'buff');
+            this.addLog('event', `⏭️ 이번 턴 카운트 안 함!`);
+            this.movePlayer(dice);
+        } else if (r.turnConsume) {
+            // 턴 소모만
+            this.addLog('event', `⏳ 이동 없이 턴만 소모!`);
+            this.endTurn();
         } else {
             this.movePlayer(dice);
         }
