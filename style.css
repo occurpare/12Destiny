@@ -64,15 +64,109 @@ body {
 /* Game Container */
 /* ============================================ */
 
-.game-container {
+.game-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.containers-wrapper {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 20px;
     width: 100%;
     max-width: 1400px;
-    background: transparent;
-    border-radius: 0;
-    padding: 24px 0;
-    box-shadow: none;
-    backdrop-filter: none;
-    border: none;
+}
+
+.game-container {
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 12px 40px var(--shadow-color);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.board-container {
+    width: 500px;
+    flex-shrink: 0;
+    background: var(--card-bg);
+}
+
+.dice-container {
+    width: 500px;
+    flex-shrink: 0;
+    background: var(--card-bg);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.container-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    text-align: center;
+    color: var(--accent-color);
+}
+
+/* 보드 컨테이너 내부 */
+.board-container .status-bar {
+    margin-bottom: 16px;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border-radius: 16px;
+}
+
+.board-container .board {
+    margin: 16px 0;
+}
+
+.board-container .status-summary {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border-radius: 16px;
+}
+
+/* 주사위 컨테이너 내부 */
+.dice-container .dice-area {
+    padding: 24px;
+    background: var(--bg-secondary);
+    border-radius: 16px;
+}
+
+.dice-container .log-area {
+    flex: 1;
+    min-height: 180px;
+    max-height: 280px;
+    overflow-y: auto;
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 16px;
+}
+
+.dice-container .button-area {
+    margin-top: auto;
+    padding-top: 12px;
+}
+
+/* 반응형 */
+@media (max-width: 1100px) {
+    .containers-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .board-container, .dice-container {
+        width: 100%;
+        max-width: 500px;
+    }
+}
     margin: 20px 0;
 }
 

@@ -94,9 +94,9 @@
         </div>
     </div>
 
-    <!-- 게임 컨테이너 -->
-    <div class="game-container">
-        <!-- 게임 헤더 -->
+    <!-- 전체 래퍼 -->
+    <div class="game-wrapper">
+        <!-- 헤더 -->
         <div class="header">
             <div class="header-top">
                 <h1>🎲 12 DICE 🎲</h1>
@@ -104,10 +104,11 @@
             </div>
         </div>
 
-        <!-- 메인 레이아웃: 좌측 보드 / 우측 주사위+로그 -->
-        <div class="main-layout">
-            <!-- 왼쪽: 게임 보드 -->
-            <div class="left-panel">
+        <!-- 좌우 컨테이너 래퍼 -->
+        <div class="containers-wrapper">
+            <!-- 왼쪽 컨테이너: 게임 보드 -->
+            <div class="game-container board-container">
+                <h2 class="container-title">📍 게임 보드</h2>
                 <div class="status-bar">
                     <div class="turn-counter">턴: <span id="currentTurn">1</span>/5</div>
                     <div class="position">위치: <span id="currentPosition">0</span>칸</div>
@@ -119,7 +120,6 @@
                     </div>
                 </div>
                 <div class="board" id="board"></div>
-                <!-- 현재 상태 요약 -->
                 <div class="status-summary" id="statusSummary">
                     <div class="summary-item">
                         <span class="summary-label">🎯 남은 거리</span>
@@ -136,8 +136,9 @@
                 </div>
             </div>
 
-            <!-- 오른쪽: 주사위 + 이벤트 로그 -->
-            <div class="right-panel">
+            <!-- 오른쪽 컨테이너: 주사위 + 이벤트 -->
+            <div class="game-container dice-container">
+                <h2 class="container-title">🎲 주사위 & 이벤트</h2>
                 <!-- 주사위 영역 -->
                 <div class="dice-area">
                     <div class="dice-display" id="diceDisplay">
