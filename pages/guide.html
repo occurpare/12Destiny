@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📖 플레이 가이드 - 12 DICE</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .guide-page { max-width: 800px; margin: 0 auto; padding: 40px 20px; line-height: 1.8; }
+        .guide-page h1 { font-size: 2rem; margin-bottom: 10px; }
+        .guide-page h2 { font-size: 1.3rem; margin: 30px 0 15px; color: #e94560; border-left: 4px solid #e94560; padding-left: 15px; }
+        .guide-page p { margin-bottom: 15px; color: #c0c0c0; }
+        .guide-page ul { margin: 15px 0; padding-left: 20px; }
+        .guide-page li { margin-bottom: 10px; color: #c0c0c0; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+        .guide-section { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .highlight-box { background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%); border-radius: 12px; padding: 20px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.1); }
+        .highlight-box h3 { margin: 0 0 10px 0; color: #ffd200; }
+        .dice-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+        .dice-card { background: rgba(0,0,0,0.2); border-radius: 10px; padding: 15px; text-align: center; }
+        .dice-card .icon { font-size: 2rem; margin-bottom: 8px; }
+        .dice-card .name { font-weight: 700; margin-bottom: 5px; }
+        .dice-card .range { color: #666; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="guide-page">
+        <a href="../index.html" class="back-link">← 게임으로 돌아가기</a>
+        
+        <h1>📖 12 DICE 플레이 가이드</h1>
+        <p style="color: #666; margin-bottom: 30px;">운과 전략이 만나는 주사위 보드게임</p>
+        
+        <div class="guide-section">
+            <h2>🎯 기본 규칙</h2>
+            <p>12 DICE는 간단하지만 중독성 있는 주사위 게임입니다.</p>
+            <ul>
+                <li><strong>목표:</strong> 5턴 안에 정확히 <span style="color: #ffd200;">12칸</span>에 도달하면 승리!</li>
+                <li><strong>주사위:</strong> 기본적으로 1~6이 나오지만, 이벤트로 변경될 수 있습니다</li>
+                <li><strong>이벤트:</strong> 매 턴 다양한 이벤트가 발생하여 게임에 영향을 줍니다</li>
+                <li><strong>승리 확률:</strong> 평균 20% 내외 (운과 전략 필수!)</li>
+            </ul>
+        </div>
+        
+        <div class="guide-section">
+            <h2>🎲 주사위 시스템</h2>
+            <p>이벤트를 통해 주사위가 다양하게 변경됩니다:</p>
+            
+            <div class="dice-grid">
+                <div class="dice-card">
+                    <div class="icon">🎲</div>
+                    <div class="name">기본 주사위</div>
+                    <div class="range">1~6</div>
+                </div>
+                <div class="dice-card">
+                    <div class="icon">🪙</div>
+                    <div class="name">황금 주사위</div>
+                    <div class="range">4~6 (유리)</div>
+                </div>
+                <div class="dice-card">
+                    <div class="icon">🪨</div>
+                    <div class="name">무거운 주사위</div>
+                    <div class="range">1~2 (불리)</div>
+                </div>
+                <div class="dice-card">
+                    <div class="icon">✨</div>
+                    <div class="name">연마된 주사위</div>
+                    <div class="range">3~5 (안정)</div>
+                </div>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>💡 주사위 전략</h3>
+                <p style="margin:0;">종반에는 작은 주사위가 유리할 수 있습니다! 10칸 이상에서는 큰 주사위가 위험할 수 있어요.</p>
+            </div>
+        </div>
+        
+        <div class="guide-section">
+            <h2>🔄 우회 루트 시스템</h2>
+            <p>12칸을 초과하면 자동으로 우회 루트가 생성됩니다:</p>
+            <ul>
+                <li>12칸 초과 시 <strong>3~6칸</strong> 우회 루트 생성</li>
+                <li>우회 루트에서도 이벤트 발생</li>
+                <li><strong>후퇴 이벤트로 12칸 도달 시 승리!</strong></li>
+            </ul>
+        </div>
+        
+        <div class="guide-section">
+            <h2>📋 이벤트 카테고리</h2>
+            <p>총 156개 이벤트가 6개 카테고리로 분류됩니다:</p>
+            <ul>
+                <li><span style="color: #38ef7d;">✅ 긍정적</span> - 보너스, 칸 이동 등 유리한 이벤트</li>
+                <li><span style="color: #667eea;">⚖️ 중립적</span> - 기회와 위험이 공존</li>
+                <li><span style="color: #ff4b2b;">❌ 부정적</span> - 후퇴, 주사위 저하 등</li>
+                <li><span style="color: #888;">😱 절망</span> - 매우 불리한 이벤트</li>
+                <li><span style="color: #ffd200;">⭐ 특별</span> - 희귀하고 강력한 이벤트</li>
+                <li><span style="color: #e91e63;">🛑 방해</span> - 종반에 자주 발생</li>
+            </ul>
+        </div>
+        
+        <div class="guide-section">
+            <h2>💡 전략 팁</h2>
+            <div class="highlight-box">
+                <h3>초반 전략 (1~4칸)</h3>
+                <p style="margin:0;">초기 장애물 이벤트가 많습니다. 큰 주사위로 빠르게 이동하는 것이 유리합니다.</p>
+            </div>
+            <div class="highlight-box">
+                <h3>중반 전략 (5~9칸)</h3>
+                <p style="margin:0;">이벤트 발생 확률이 높아집니다. 상황에 맞는 전략이 필요합니다.</p>
+            </div>
+            <div class="highlight-box">
+                <h3>종반 전략 (10~12칸)</h3>
+                <p style="margin:0;"><strong>가장 중요!</strong> 방해 이벤트가 강해집니다. 작은 주사위로 정확히 도달하는 것이 포인트!</p>
+            </div>
+        </div>
+        
+        <div class="guide-section">
+            <h2>🏆 승리 조건</h2>
+            <ul>
+                <li>정확히 12칸에 도달</li>
+                <li>우회 루트에서 후퇴 이벤트로 12칸 도달</li>
+                <li>이벤트 후퇴로 정확히 12칸 도착</li>
+            </ul>
+        </div>
+        
+        <p style="text-align: center; margin-top: 40px;">
+            <a href="../index.html" style="display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: white; text-decoration: none; font-weight: 700;">🎮 게임 시작하기</a>
+        </p>
+    </div>
+</body>
+</html>

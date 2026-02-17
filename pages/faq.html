@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❓ 자주 묻는 질문 - 12 DICE</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .faq-page { max-width: 800px; margin: 0 auto; padding: 40px 20px; line-height: 1.8; }
+        .faq-page h1 { font-size: 2rem; margin-bottom: 30px; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+        .faq-item { background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; }
+        .faq-question { padding: 20px; cursor: pointer; font-weight: 700; position: relative; padding-right: 40px; }
+        .faq-question:hover { background: rgba(255,255,255,0.03); }
+        .faq-question::after { content: '+'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 1.5rem; color: #e94560; }
+        .faq-question.active::after { content: '−'; }
+        .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: all 0.3s ease; }
+        .faq-answer.active { padding: 0 20px 20px; max-height: 500px; }
+        .faq-answer p { margin: 0; color: #a0a0a0; }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.faq-question').forEach(q => {
+                q.addEventListener('click', () => {
+                    q.classList.toggle('active');
+                    q.nextElementSibling.classList.toggle('active');
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="faq-page">
+        <a href="../index.html" class="back-link">← 게임으로 돌아가기</a>
+        
+        <h1>❓ 자주 묻는 질문</h1>
+        
+        <div class="faq-item">
+            <div class="faq-question">승리 확률이 얼마인가요?</div>
+            <div class="faq-answer">
+                <p>평균적으로 20% 내외입니다. 완전한 랜덤은 아니지만 운이 큰 영향을 미칩니다. 하지만 전략적으로 플레이하면 승리 확률을 높일 수 있습니다.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">주사위가 왜 바뀌나요?</div>
+            <div class="faq-answer">
+                <p>특정 이벤트가 발생하면 주사위의 범위나 속성이 변경됩니다. 이는 게임의 전략적 요소입니다. 상황에 따라 유리하거나 불리할 수 있으니 잘 활용하세요!</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">우회 루트는 무엇인가요?</div>
+            <div class="faq-answer">
+                <p>12칸을 초과하면 자동으로 생성되는 추가 경로입니다. 3~6칸이 랜덤으로 생성됩니다. 우회 루트에서 후퇴 이벤트로 12칸에 도달해도 승리합니다!</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">이벤트가 너무 많이 발생해요!</div>
+            <div class="faq-answer">
+                <p>위치에 따라 이벤트 발생 확률이 달라집니다. 0~3칸에서는 80%, 4~6칸에서는 86%, 7~9칸에서는 92%, 10칸 이상에서는 96~99.5%의 확률로 이벤트가 발생합니다.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">모바일에서도 플레이 가능한가요?</div>
+            <div class="faq-answer">
+                <p>네! 반응형 디자인으로 모든 기기에서 완벽하게 플레이할 수 있습니다. 스마트폰, 태블릿, PC 모두 지원합니다.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">게임 데이터가 저장되나요?</div>
+            <div class="faq-answer">
+                <p>"다시 보지 않기" 설정과 언어 설정만 로컬 저장소에 저장됩니다. 게임 진행 상황은 저장되지 않습니다. 매번 새로운 도전!</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">언어는 어떻게 변경하나요?</div>
+            <div class="faq-answer">
+                <p>게임 화면 오른쪽 상단의 🌐 버튼을 클릭하면 한국어/English를 전환할 수 있습니다.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">이벤트 팝업을 빠르게 넘기고 싶어요</div>
+            <div class="faq-answer">
+                <p>이벤트 팝업을 클릭하면 즉시 다음 단계로 넘어갈 수 있습니다!</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">광고가 너무 많아요</div>
+            <div class="faq-answer">
+                <p>저희는 최소한의 광고만 게시합니다. 광고 수익은 서비스 운영과 개발에 사용됩니다. 브라우저에서 광고 차단기를 사용하면 광고를 숨길 수 있습니다.</p>
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question">버그를 발견했어요 / 제안이 있어요</div>
+            <div class="faq-answer">
+                <p><a href="mailto:occurpare@naver.com" style="color: #667eea;">occurpare@naver.com</a>으로 연락해주세요! 소중한 피드백은 서비스 개선에 큰 도움이 됩니다.</p>
+            </div>
+        </div>
+        
+        <p style="text-align: center; margin-top: 40px;">
+            <a href="../index.html" style="display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: white; text-decoration: none; font-weight: 700;">🎮 게임 시작하기</a>
+        </p>
+    </div>
+</body>
+</html>

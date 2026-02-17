@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>12-DICE 이벤트 전체 보고서</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { 
+            color: #333; 
+            text-align: center;
+            border-bottom: 3px solid #4a90d9;
+            padding-bottom: 10px;
+        }
+        h2 { 
+            color: #fff; 
+            padding: 10px 15px; 
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        .positive h2 { background: linear-gradient(135deg, #4CAF50, #45a049); }
+        .neutral h2 { background: linear-gradient(135deg, #9E9E9E, #757575); }
+        .negative h2 { background: linear-gradient(135deg, #f44336, #d32f2f); }
+        .despair h2 { background: linear-gradient(135deg, #9C27B0, #7B1FA2); }
+        .special h2 { background: linear-gradient(135deg, #FF9800, #F57C00); }
+        .early h2 { background: linear-gradient(135deg, #607D8B, #455A64); }
+        .turnPressure h2 { background: linear-gradient(135deg, #3F51B5, #303F9F); }
+        .curse h2 { background: linear-gradient(135deg, #673AB7, #512DA8); }
+        .blocker h2 { background: linear-gradient(135deg, #E91E63, #C2185B); }
+        .bypass h2 { background: linear-gradient(135deg, #795548, #5D4037); }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        th, td { 
+            padding: 12px 15px; 
+            text-align: left; 
+            border-bottom: 1px solid #eee;
+        }
+        th { 
+            background: #333; 
+            color: white;
+            font-weight: 600;
+        }
+        tr:hover { background: #f9f9f9; }
+        tr:last-child td { border-bottom: none; }
+        
+        .summary { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .summary h3 { color: #333; margin-top: 0; }
+        .summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .summary-item { 
+            text-align: center; 
+            padding: 15px;
+            border-radius: 8px;
+            background: #f5f5f5;
+        }
+        .summary-item .count { 
+            font-size: 2em; 
+            font-weight: bold;
+            display: block;
+        }
+        .summary-item .label { font-size: 0.9em; color: #666; }
+        
+        .weights { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .weights table { margin-top: 10px; }
+        .weights th { background: #4a90d9; }
+        
+        code { 
+            background: #f0f0f0; 
+            padding: 2px 6px; 
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        @media print {
+            body { background: white; }
+            table { box-shadow: none; }
+            .summary, .weights { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <h1>🎲 12-DICE 이벤트 전체 보고서</h1>
+    
+    <div class="summary">
+        <h3>📊 이벤트 개요</h3>
+        <div class="summary-grid">
+            <div class="summary-item" style="background: #e8f5e9;">
+                <span class="count" style="color: #4CAF50;">20</span>
+                <span class="label">✅ 긍정적</span>
+            </div>
+            <div class="summary-item" style="background: #fafafa;">
+                <span class="count" style="color: #9E9E9E;">20</span>
+                <span class="label">⚖️ 중립적</span>
+            </div>
+            <div class="summary-item" style="background: #ffebee;">
+                <span class="count" style="color: #f44336;">40</span>
+                <span class="label">❌ 부정적</span>
+            </div>
+            <div class="summary-item" style="background: #f3e5f5;">
+                <span class="count" style="color: #9C27B0;">12</span>
+                <span class="label">😱 절망</span>
+            </div>
+            <div class="summary-item" style="background: #fff3e0;">
+                <span class="count" style="color: #FF9800;">12</span>
+                <span class="label">⭐ 특별</span>
+            </div>
+            <div class="summary-item" style="background: #eceff1;">
+                <span class="count" style="color: #607D8B;">10</span>
+                <span class="label">🚧 초기 장애물</span>
+            </div>
+            <div class="summary-item" style="background: #e8eaf6;">
+                <span class="count" style="color: #3F51B5;">12</span>
+                <span class="label">⏰ 턴 압박</span>
+            </div>
+            <div class="summary-item" style="background: #ede7f6;">
+                <span class="count" style="color: #673AB7;">10</span>
+                <span class="label">🔮 누적 저주</span>
+            </div>
+            <div class="summary-item" style="background: #fce4ec;">
+                <span class="count" style="color: #E91E63;">10</span>
+                <span class="label">🛑 클리어 방해</span>
+            </div>
+            <div class="summary-item" style="background: #efebe9;">
+                <span class="count" style="color: #795548;">10</span>
+                <span class="label">🔄 우회 루트</span>
+            </div>
+        </div>
+        <p style="text-align: center; font-size: 1.5em; margin-top: 15px;">
+            <strong>총 156개</strong> 이벤트
+        </p>
+    </div>
+    
+    <div class="weights">
+        <h3>⚖️ 카테고리별 가중치 (위치 기반)</h3>
+        <table>
+            <tr>
+                <th>구간</th>
+                <th>positive</th>
+                <th>neutral</th>
+                <th>negative</th>
+                <th>despair</th>
+                <th>special</th>
+                <th>early</th>
+                <th>turnPressure</th>
+                <th>curse</th>
+                <th>blocker</th>
+            </tr>
+            <tr>
+                <td><strong>초반 (0~3)</strong></td>
+                <td>0.001</td><td>0.02</td><td>15</td><td>8</td><td>0.002</td><td>20</td><td>12</td><td>15</td><td>12</td>
+            </tr>
+            <tr>
+                <td><strong>중반 (4~6)</strong></td>
+                <td>0.0001</td><td>0.005</td><td>15</td><td>15</td><td>0.001</td><td>0.005</td><td>15</td><td>22</td><td>30</td>
+            </tr>
+            <tr>
+                <td><strong>중후반 (7~8)</strong></td>
+                <td>0.000001</td><td>0.0001</td><td>18</td><td>25</td><td>0.00001</td><td>0</td><td>18</td><td>30</td><td>55</td>
+            </tr>
+            <tr>
+                <td><strong>종반 (9+)</strong></td>
+                <td>0.0000001</td><td>0.00001</td><td>20</td><td>35</td><td>0.000001</td><td>0</td><td>20</td><td>35</td><td>60</td>
+            </tr>
+        </table>
+        <p style="margin-top: 10px; color: #666;">
+            ※ 가중치가 높을수록 해당 카테고리 이벤트 발생 확률 증가
+        </p>
+        
+        <h4 style="margin-top: 20px;">📍 기본 발동 확률</h4>
+        <ul>
+            <li>위치 0~3: <strong>92%</strong></li>
+            <li>위치 4~6: <strong>96%</strong></li>
+            <li>위치 7~9: <strong>99%</strong></li>
+            <li>위치 10+: <strong>99.5%</strong></li>
+        </ul>
+    </div>
+    
+    <section class="positive">
+        <h2>✅ 긍정적 이벤트 (Positive) - 20개</h2>
+        <table>
+            <tr><th>ID</th><th>이름</th><th>아이콘</th><th>발동 조건</th><th>효과</th></tr>
+            <tr><td>p01</td><td>용기 북돋우기</td><td>✨</td><td>위치≤6, 주사위≤3</td><td>+1~3칸</td></tr>
+            <tr><td>p02</td><td>주사위 복제</td><td>🎲🎲</td><td>위치≤4, 주사위=1</td><td>2회 추가 굴림</td></tr>
+            <tr><td>p03</td><td>천국의 축복</td><td>👼</td><td>턴≥3, 위치≤3</td><td>+5칸</td></tr>
+            <tr><td>p04</td><td>자비의 턴</td><td>🙏</td><td>마지막턴, 주사위≤2</td><td>턴+2</td></tr>
+            <tr><td>p05</td><td>황금 주사위</td><td>🪙</td><td>위치≤1, 주사위≥5</td><td>주사위 4~6</td></tr>
+            <tr><td>p06</td><td>지름길</td><td>🗺️</td><td>위치1~6, 주사위≤4</td><td>+3칸</td></tr>
+            <tr><td>p07</td><td>행운의 별</td><td>⭐</td><td>위치≤6, 주사위≤2, 턴≤3</td><td>다음 이벤트 긍정</td></tr>
+            <tr><td>p08</td><td>스프링 보드</td><td>🎯</td><td>위치1~5, 주사위≥4</td><td>이동거리 2배</td></tr>
+            <tr><td>p09</td><td>요정의 가루</td><td>🧚</td><td>위치≤3, 주사위≤3</td><td>다음 주사위+2</td></tr>
+            <tr><td>p10</td><td>마법 포털</td><td>🌀</td><td>위치=3, 주사위=3</td><td>6칸 또는 8칸 선택</td></tr>
+            <tr><td>p11</td><td>갬블러 주사위</td><td>🎰</td><td>위치=4, 주사위≤2</td><td>주사위 1~8</td></tr>
+            <tr><td>p12</td><td>축복의 비</td><td>🌧️✨</td><td>위치≤2, 턴=1</td><td>2턴간 이동+1</td></tr>
+            <tr><td>p13</td><td>무지개 다리</td><td>🌈</td><td>위치=5, 주사위=5</td><td>9칸으로 이동</td></tr>
+            <tr><td>p14</td><td>주사위 업그레이드</td><td>⬆️</td><td>위치≤3, 굴림≥3회</td><td>주사위 2~6</td></tr>
+            <tr><td>p15</td><td>부활 부적</td><td>📿</td><td>위치≤2, 주사위=2</td><td>후퇴 1회 방어</td></tr>
+            <tr><td>p16</td><td>행운의 네잎클로버</td><td>🍀</td><td>위치≤4, 10% 확률</td><td>+4칸</td></tr>
+            <tr><td>p17</td><td>천사의 날개</td><td>👼</td><td>턴=1, 주사위≥4</td><td>+3칸</td></tr>
+            <tr><td>p18</td><td>복주머니</td><td>🧧</td><td>위치=0, 턴≤2</td><td>3번 이동시 +1</td></tr>
+            <tr><td>p19</td><td>별똥별</td><td>🌠</td><td>위치≤5, 턴≥3, 주사위≤2</td><td>+3칸</td></tr>
+            <tr><td>p20</td><td>마법 카펫</td><td>🧞</td><td>위치2~4, 주사위=6</td><td>+1~4칸 랜덤</td></tr>
+        </table>
+    </section>
+    
+    <section class="neutral">
+        <h2>⚖️ 중립적 이벤트 (Neutral) - 20개</h2>
+        <table>
+            <tr><th>ID</th><th>이름</th><th>아이콘</th><th>발동 조건</th><th>효과</th></tr>
+            <tr><td>n01</td><td>무반응</td><td>😐</td><td>주사위=3</td><td>아무 일 없음</td></tr>
+            <tr><td>n02</td><td>수수께끼의 상자</td><td>📦</td><td>주사위=4, 위치3~8</td><td>랜덤 보상/페널티 선택</td></tr>
+            <tr><td>n03</td><td>주사위 상점</td><td>🏪</td><td>위치=5, 턴≥2</td><td>주사위 교환 선택</td></tr>
+            <tr><td>n04</td><td>거울의 주사위</td><td>🪞</td><td>주사위=4</td><td>주사위 7-d로 변경</td></tr>
+            <tr><td>n05</td><td>순간이동 스테이션</td><td>🚀</td><td>위치=6, 주사위3~4</td><td>2칸/10칸 선택 이동</td></tr>
+            <tr><td>n06</td><td>가챠 머신</td><td>🎰</td><td>위치4~7, 주사위≥4</td><td>랜덤 효과</td></tr>
+            <tr><td>n07</td><td>날씨 예보</td><td>🌤️</td><td>턴=3, 위치4~8</td><td>다음 주사위 영향</td></tr>
+            <tr><td>n08</td><td>기억 테스트</td><td>🧠</td><td>위치=7, 주사위=5</td><td>이전 주사위 영향</td></tr>
+            <tr><td>n09</td><td>동전 던지기</td><td>🪙</td><td>위치=4</td><td>50% +2칸 or 제자리</td></tr>
+            <tr><td>n10</td><td>미니룰렛</td><td>🎡</td><td>위치3~6, 턴≥2</td><td>랜덤 효과</td></tr>
+            <tr><td>n11</td><td>퀴즈</td><td>❓</td><td>위치=5, 턴=2</td><td>50% +2칸 or -1칸</td></tr>
+            <tr><td>n12</td><td>요술거울</td><td>🪞✨</td><td>위치5~8, 주사위=3</td><td>50% 이동 반전</td></tr>
+            <tr><td>n13</td><td>신비의 크리스탈</td><td>🔮</td><td>위치=6, 턴≥2</td><td>다음 이벤트 예고</td></tr>
+            <tr><td>n14</td><td>주사위 병원</td><td>🏥</td><td>위치=4, changed dice</td><td>기본 주사위 복구</td></tr>
+            <tr><td>n15</td><td>복불복 박스</td><td>🎁</td><td>위치4~8, 턴≥2</td><td>50% +3칸 or -2칸</td></tr>
+            <tr><td>n16</td><td>숫자 카드</td><td>🃏</td><td>위치=7</td><td>다음 주사위 +1 or -1</td></tr>
+            <tr><td>n17</td><td>시간 정지</td><td>⏸️</td><td>턴=3, 위치5~7</td><td>턴 카운트 안 함</td></tr>
+            <tr><td>n18</td><td>행운의 바람개비</td><td>🎋</td><td>위치=3, 주사위=3</td><td>다음 굴림 2회 연속</td></tr>
+            <tr><td>n19</td><td>주사위 카지노</td><td>🎰🎲</td><td>위치=6, 턴≥3</td><td>짝수 +2칸, 홀수 -1칸</td></tr>
+            <tr><td>n20</td><td>신비의 숫자</td><td>🔢✨</td><td>주사위=턴 번호</td><td>+턴 수 만큼</td></tr>
+        </table>
+    </section>
+    
+    <section class="negative">
+        <h2>❌ 부정적 이벤트 (Negative) - 40개</h2>
+        <table>
+            <tr><th>ID</th><th>이름</th><th>아이콘</th><th>발동 조건</th><th>효과</th></tr>
+            <tr><td>e01</td><td>기본 망치</td><td>🔨</td><td>위치4~9, 주사위≥4</td><td>주사위 1~4</td></tr>
+            <tr><td>e02</td><td>1~3 조항</td><td>📜</td><td>위치5~10, 주사위≥4</td><td>주사위 1~3</td></tr>
+            <tr><td>e03</td><td>마이너스 함정</td><td>➖</td><td>위치7~10, 주사위≥4</td><td>다음 주사위 -1~-3</td></tr>
+            <tr><td>e04</td><td>바람 폭풍</td><td>🌪️</td><td>위치6~11, 주사위≥3</td><td>연타 게임</td></tr>
+            <tr><td>e05</td><td>지진</td><td>🌋</td><td>위치≥7, 주사위≥4</td><td>-3칸 + 화면 흔들림</td></tr>
+            <tr><td>e06</td><td>블랙홀</td><td>🕳️</td><td>위치≥8, 턴≥2</td><td>-7칸</td></tr>
+            <tr><td>e07</td><td>골이 도망</td><td>🏃</td><td>골까지≤3, 주사위≥4</td><td>골+5칸</td></tr>
+            <tr><td>e08</td><td>골 실종</td><td>👻</td><td>골까지≤1, 주사위≥3</td><td>골 숨김 + 턴+1</td></tr>
+            <tr><td>e09</td><td>시간 역행</td><td>⏪</td><td>턴≥4, 위치≥6</td><td>4~6칸 후퇴</td></tr>
+            <tr><td>e10</td><td>주사위 포식</td><td>👹</td><td>위치≥11, 주사위≥5</td><td>1턴 스킵</td></tr>
+            <tr><td>e11</td><td>끈적한 바닥</td><td>🍯</td><td>위치≥8, 주사위3~5</td><td>이동 반토스</td></tr>
+            <tr><td>e12</td><td>얼음 바닥</td><td>🧊</td><td>위치≥7, 주사위≥4</td><td>+1~3칸 미끄러짐</td></tr>
+            <tr><td>e13</td><td>함정 문</td><td>🪤</td><td>위치≥9, 주사위=6</td><td>-3칸</td></tr>
+            <tr><td>e14</td><td>중력 반전</td><td>⬆️</td><td>위치≥10, 주사위≥5</td><td>이동 방향 반전</td></tr>
+            <tr><td>e15</td><td>짙은 안개</td><td>🌫️</td><td>위치≥8, 턴≥3</td><td>주사위 값 숨김</td></tr>
+            <tr><td>e16</td><td>역주행 길</td><td>↩️</td><td>위치≥6, 주사위≥5</td><td>2턴간 역주행 모드</td></tr>
+            <tr><td>e17</td><td>번개</td><td>⚡</td><td>위치≥9, 주사위=6</td><td>주사위 1~2</td></tr>
+            <tr><td>e18</td><td>스파이크 함정</td><td>📍</td><td>위치≥8, 주사위≥5</td><td>-2칸 + 주사위1~3</td></tr>
+            <tr><td>e19</td><td>달팽이 저주</td><td>🐌</td><td>위치≥7, 주사위≥4, 턴≥2</td><td>주사위-2</td></tr>
+            <tr><td>e20</td><td>사막의 모래</td><td>🏜️</td><td>위치≥8, 주사위≥4</td><td>이동-1</td></tr>
+            <tr><td>e21</td><td>폭설</td><td>❄️</td><td>위치≥9, 턴≥3</td><td>2턴간 이동-1</td></tr>
+            <tr><td>e22</td><td>화산 폭발</td><td>🌋🔥</td><td>위치≥10, 주사위≥5</td><td>-5칸</td></tr>
+            <tr><td>e23</td><td>심연</td><td>🌑</td><td>위치≥9, 주사위=6, 턴≥3</td><td>-4칸</td></tr>
+            <tr><td>e24</td><td>혼란의 미로</td><td>🌀</td><td>위치≥8, 주사위≥4</td><td>랜덤 위치(0~8)</td></tr>
+            <tr><td>e25</td><td>저주의 돌</td><td>🗿</td><td>위치≥7, 주사위≥5</td><td>주사위 1만</td></tr>
+            <tr><td>e26</td><td>독 구름</td><td>☁️☠️</td><td>위치≥9, 턴≥3</td><td>1턴 스킵</td></tr>
+            <tr><td>e27</td><td>낙석</td><td>🪨</td><td>위치≥8, 주사위≥5</td><td>-2칸</td></tr>
+            <tr><td>e28</td><td>수렁</td><td>🟤</td><td>위치≥7, 주사위≥4</td><td>이동 반토스</td></tr>
+            <tr><td>e29</td><td>가시 덤불</td><td>🌵</td><td>위치≥8, 주사위≥3</td><td>-1칸 + 주사위1~4</td></tr>
+            <tr><td>e30</td><td>번개 폭풍</td><td>⛈️</td><td>위치≥10, 주사위≥5</td><td>연타 게임</td></tr>
+            <tr><td>e31</td><td>거미줄</td><td>🕸️</td><td>위치≥6, 주사위≥4</td><td>이동-2</td></tr>
+            <tr><td>e32</td><td>안개 늪</td><td>🌫️🌿</td><td>위치≥7, 턴≥2</td><td>-3칸</td></tr>
+            <tr><td>e33</td><td>화염 구덩이</td><td>🔥🕳️</td><td>위치≥8, 주사위≥4</td><td>-3칸</td></tr>
+            <tr><td>e35</td><td>모래 폭풍</td><td>🌪️🏜️</td><td>위치≥7, 주사위≥5</td><td>-2칸</td></tr>
+            <tr><td>e36</td><td>유령의 손길</td><td>👻✋</td><td>위치≥10, 턴≥3</td><td>-2~4칸</td></tr>
+            <tr><td>e37</td><td>어둠의 터널</td><td>🌑🕳️</td><td>위치≥8, 주사위≥4</td><td>2턴간 블라인드</td></tr>
+            <tr><td>e38</td><td>지뢰</td><td>💣</td><td>위치≥9, 주사위=6</td><td>-4칸</td></tr>
+            <tr><td>e40</td><td>역습</td><td>⚔️</td><td>위치≥10, 주사위≥4, 턴≥4</td><td>-5칸</td></tr>
+        </table>
+        <p style="color: #666; font-size: 0.9em; margin-top: 10px;">* e34, e39는 중복 제거됨</p>
+    </section>
+    
+    <section class="despair">
+        <h2>😱 절망 이벤트 (Despair) - 12개</h2>
+        <table>
+            <tr><th>ID</th><th>이름</th><th>아이콘</th><th>발동 조건</th><th>효과</th></tr>
+            <tr><td>d01</td><td>우회로 생성</td><td>🚧</td><td>12칸 초과 시</td><td>골→18칸</td></tr>
+            <tr><td>d02</td><td>함정 도로</td><td>⚠️</td><td>위치≥10, 마지막턴</td><td>매턴 -1칸</td></tr>
+            <tr><td>d03</td><td>저주 주사위</td><td>💀</td><td>골까지≤2, 주사위≥2</td><td>주사위 0만</td></tr>
+            <tr><td>d04</td><td>개발자 피로</td><td>😴</td><td>마지막턴-1, 위치≥10</td><td>3초 정지</td></tr>
+            <tr><td>d05</td><td>최종 보스</td><td>🎮</td><td>골까지≤3, 주사위≥3</td><td>연타 보스전</td></tr>
+            <tr><td>d06</td><td>거울 미로</td><td>🪞</td><td>골까지≤3, 주사위≥3</td><td>랜덤 위치(0~10)</td></tr>
+            <tr><td>d07</td><td>시간 왜곡</td><td>🌀</td><td>골까지≤2, 턴≥3</td><td>턴 1로 리셋</td></tr>
+            <tr><td>d08</td><td>골 보호막</td><td>🛡️</td><td>골까지=1, 주사위≥3</td><td>2턴간 골 차단</td></tr>
+            <tr><td>d09</td><td>불가능의 벽</td><td>🧱</td><td>골까지≤3, 주사위≥4</td><td>주사위 0~1</td></tr>
+            <tr><td>d10</td><td>운명의 룰렛</td><td>🎯</td><td>골까지≤1, 턴≥4</td><td>1/6 성공 or 시작점</td></tr>
+            <tr><td>d11</td><td>무한 회랑</td><td>♾️</td><td>위치≥11, 주사위≥4</td><td>제자리</td></tr>
+            <tr><td>d12</td><td>최후의 시련</td><td>⚔️💀</td><td>골까지=1, 마지막턴</td><td>타이밍 게임</td></tr>
+        </table>
+    </section>
+    
+    <section class="special">
+        <h2>⭐ 특별 이벤트 (Special) - 12개</h2>
+        <table>
+            <tr><th>ID</th><th>이름</th><th>아이콘</th><th>발동 조건</th><th>효과</th></tr>
+            <tr><td>s01</td><td>럭키 7</td><td>🍀</td><td>위치=7, 주사위=1</td><td>10칸 or 시작점 선택</td></tr>
+            <tr><td>s02</td><td>완벽한 타이밍</td><td>⏱️</td><td>턴=3, 위치=6</td><td>타이밍 게임(+4칸)</td></tr>
+            <tr><td>s03</td><td>주사위 융합</td><td>⚗️</td><td>이벤트≥3회, 주사위=5</td><td>주사위 1~8</td></tr>
+            <tr><td>s04</td><td>주사위 분신</td><td>👥</td><td>주사위=6, 20% 확률</td><td>2회 추가 굴림</td></tr>
+            <tr><td>s05</td><td>턴 복권</td><td>🎫</td><td>턴=2, 주사위=2</td><td>50% 턴+3 or -2칸</td></tr>
+            <tr><td>s06</td><td>미스터리 텔레포트</td><td>✨</td><td>위치=4, 턴=4</td><td>랜덤 위치(2~12)</td></tr>
+            <tr><td>s07</td><td>더블 오어 낫락</td><td>🎰</td><td>마지막턴, 위치≥8</td><td>50% 승리 or 시작점</td></tr>
+            <tr><td>s08</td><td>행운의 숫자</td><td>🔢</td><td>위치=주사위, ≤5</td><td>+주사위값 만큼</td></tr>
+            <tr><td>s09</td><td>주사위 파손</td><td>💔</td><td>주사위≥5, 위치≥3, 15%</td><td>주사위 1~3 or 4~6</td></tr>
+            <tr><td>s10</td><td>연마된 주사위</td><td>✨🎲</td><td>위치≤2, 주사위≤2, 20%</td><td>주사위 3~5</td></tr>
+            <tr><td>s11</td><td>무거운 주사위</td><td>🪨🎲</td><td>턴≥3, 주사위≥4, 10%</td><td>주사위 1~2</td></tr>
+            <tr><td>s12</td><td>경량 주사위</td><td>🎈🎲</td><td>위치≤4, 턴≤2, 10%</td><td>주사위 5~6</td></tr>
+        </table>
+    </section>
+    
+    <section class="early">
+        <h2>🚧 초기 장애물 (Early) - 10개</h2>
+        <table>
+            <tr><th>ID</th><th>이름</th><th>아이콘</th><th>발동 조건</th><th>효과</th></tr>
+            <tr><td>r01</td><td>시작의 저주</td><td>👻</td><td>위치≤1, 턴≤2, 주사위≤3</td><td>턴 소모, 이동 없음</td></tr>
+            <tr><td>r02</td><td>배웅 없는 출발</td><td>🚶</td><td>위치=0, 주사위≥5</td><td>다음 주사위-2</td></tr>
+            <tr><td>r03</td><td>미끄러운 시작선</td><td>🧊</td><td>위치≤2, 주사위≥3</td><td>-1칸</td></tr>
+            <tr><td>r04</td><td>의심의 그림자</td><td>👤</td><td>위치≤2, 턴=1</td><td>다음 주사위 최대 5</td></tr>
+            <tr><td>r05</td><td>잃어버린 약속</td><td>📜</td><td>위치≤3, 턴≤2, 주사위=2</td><td>이동 없음</td></tr>
+            <tr><td>r06</td><td>지연의 안개</td><td>🌫️</td><td>위치≤2, 턴≥2, 주사위≤2</td><td>다음 주사위 1~4</td></tr>
+            <tr><td>r07</td><td>첫발의 주저</td><td>😰</td><td>위치=0, 턴=2</td><td>다음 주사위-1</td></tr>
+            <tr><td>r08</td><td>거짓 지름길</td><td>🚧</td><td>위치=2, 주사위=6</td><td>-3칸</td></tr>
+            <tr><td>r09</td><td>주사위 녹슴</td><td>🔩</td><td>위치≤3, 첫굴림, 주사위≤3</td><td>다음 주사위 최대 4</td></tr>
+            <tr><td>r10</td><td>느린 시작</td><td>🐢</td><td>위치≤1, 턴≥2, 주사위≤2</td><td>턴 소모</td></tr>
+        </table>
+    </section>
+    
+    <section class="turnPressure">
+        <h2>⏰ 턴 압박 이벤트 (TurnPressure) - 12개</h2>
+        <table>
+            <tr><th>ID</th><th>이름</th><th>아이콘</th><th>발동 조건</th><th>효과</th></tr>
+            <tr><td>t01</td><td>모래시계 역전</td><td>⏳</td><td>턴≥3, 위치≤6, 주사위≥5</td><td>턴-1</td></tr>
+            <tr><td>t02</td><td>새로고침</td><td>🔄</td><td>턴≥2, 위치≥4, 주사위=1</td><td>제자리</td></tr>
+            <tr><td>t03</td><td>턴 도난</td><td>🦹</td><td>턴≥3, 위치≥8, 주사위≥4</td><td>턴-1</td></tr>
+            <tr><td>t04</td><td>타임오버 경고</td><td>⚠️</td><td>마지막턴-1, 골까지≥3</td><td>마지막턴 주사위 1~3</td></tr>
+            <tr><td>t05</td><td>시간의 구멍</td><td>🕳️⏰</td><td>턴≥2, 주사위=6, 위치≥5</td><td>턴+2 소모</td></tr>
+            <tr><td>t06</td><td>미래 빚</td><td>💳</td><td>턴≤2, 위치≤4, 주사위≥5</td><td>다음 2턴 주사위-2</td></tr>
+            <tr><td>t07</td><td>턴 역전</td><td>↩️</td><td>마지막턴, 위치<10</td><td>-2칸</td></tr>
+            <tr><td>t08</td><td>초시계 멈춤</td><td>⏱️</td><td>턴≥4, 주사위≤2</td><td>이동 없이 턴 소모</td></tr>
+            <tr><td>t09</td><td>데드라인 축소</td><td>📐</td><td>턴≥3, 위치≥6, 주사위≥5</td><td>골+1칸</td></tr>
+            <tr><td>t10</td><td>서두름의 대가</td><td>🏃💨</td><td>턴≥3, 위치≥6, 주사위≥4</td><td>-2칸</td></tr>
+            <tr><td>t11</td><td>최후통지</td><td>📨</td><td>마지막턴-1, 주사위≤2</td><td>마지막턴 6 필수</td></tr>
+            <tr><td>t12</td><td>시간 폭탄</td><td>💣⏰</td><td>턴≤2, 위치≤3, 주사위=1</td><td>3턴후 폭발(-3칸)</td></tr>
+        </table>
+    </section>
+    
+    <section class="curse">
+        <h2>🔮 누적 저주 (Curse) - 10개</h2>
+        <table>
+            <tr><th>ID</th><th>이름</th><th>아이콘</th><th>발동 조건</th><th>효과</th></tr>
+            <tr><td>c01</td><td>무거운 발걸음</td><td>🥾</td><td>위치≥4, 주사위≤2</td><td>3턴간 이동-1</td></tr>
+            <tr><td>c02</td><td>저주받은 주사위</td><td>🎲💀</td><td>굴림≥5회, 주사위=1</td><td>홀수만 나옴</td></tr>
+            <tr><td>c03</td><td>역주행 징조</td><td>⬅️</td><td>위치≥6, 주사위≤3</td><td>다음 주사위 뒤로</td></tr>
+            <tr><td>c04</td><td>마법 억제</td><td>✨❌</td><td>위치≥5, 턴≥2, 주사위≤2</td><td>3턴간 긍정이벤트 차단</td></tr>
+            <tr><td>c05</td><td>불안정 주사위</td><td>🎲↔️</td><td>굴림≥4회, 주사위≥5</td><td>50% 주사위 반전</td></tr>
+            <tr><td>c06</td><td>위축</td><td>😰</td><td>위치≥7, 주사위≥4</td><td>다음 주사위 최대 4</td></tr>
+            <tr><td>c07</td><td>망각의 안개</td><td>🌫️🧠</td><td>위치≥5, 턴≥3, 주사위≤2</td><td>2턴간 주사위 숨김</td></tr>
+            <tr><td>c08</td><td>불행의 사슬</td><td>⛓️</td><td>위치≥6, 주사위≥4, 턴≥2</td><td>다음 이벤트 부정적</td></tr>
+            <tr><td>c09</td><td>주사위 부식</td><td>🎲🧪</td><td>굴림≥6회, 주사위≥3</td><td>다음 주사위 최대-1</td></tr>
+            <tr><td>c10</td><td>운명의 빚</td><td>📋💸</td><td>위치≥8, 턴≥3, 주사위≤3</td><td>이동 절반 빚 갚음</td></tr>
+        </table>
+    </section>
+    
+    <section class="blocker">
+        <h2>🛑 클리어 방해 (Blocker) - 10개</h2>
+        <table>
+            <tr><th>ID</th><th>이름</th><th>아이콘</th><th>발동 조건</th><th>효과</th></tr>
+            <tr><td>b01</td><td>골인저부</td><td>🛑</td><td>골까지≤7</td><td>-7칸</td></tr>
+            <tr><td>b02</td><td>마지막 관문</td><td>🚪🔒</td><td>골까지≤6</td><td>-6칸 + 주사위 1~2</td></tr>
+            <tr><td>b03</td><td>승리의 미끄럼</td><td>🏆</td><td>골까지≤4, 위치≥8</td><td>초과 시 제자리</td></tr>
+            <tr><td>b04</td><td>감시의 눈</td><td>👁️</td><td>위치≥6, 턴≥2</td><td>홀수 시 -2칸</td></tr>
+            <tr><td>b05</td><td>피니쉬 라인 이동</td><td>🏁🏃</td><td>골까지≤6</td><td>골+7칸</td></tr>
+            <tr><td>b06</td><td>최종 테스트</td><td>📋</td><td>골까지≤4, 턴≥2</td><td>연타 게임</td></tr>
+            <tr><td>b07</td><td>거의 다 왔는데</td><td>😫</td><td>골까지≤6</td><td>-8칸</td></tr>
+            <tr><td>b08</td><td>승리 조건 추가</td><td>✅+</td><td>위치≥7, 턴≥2</td><td>홀수로만 승리</td></tr>
+            <tr><td>b09</td><td>벽</td><td>🧱</td><td>골까지≤5</td><td>-10칸</td></tr>
+            <tr><td>b10</td><td>시간 압박</td><td>⏰</td><td>골까지≤6, 턴≥2</td><td>턴-1</td></tr>
+        </table>
+    </section>
+    
+    <section class="bypass">
+        <h2>🔄 우회 루트 이벤트 (Bypass) - 10개</h2>
+        <p style="background: #fff3e0; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+            <strong>발동 조건:</strong> 12칸 초과 시 99% 확률로 발동
+        </p>
+        <table>
+            <tr><th>ID</th><th>이름</th><th>아이콘</th><th>효과</th></tr>
+            <tr><td>bp01</td><td>블랙홀</td><td>🕳️</td><td>-8칸</td></tr>
+            <tr><td>bp02</td><td>화염구덩이</td><td>🔥🕳️</td><td>-5칸</td></tr>
+            <tr><td>bp03</td><td>우회의 저주</td><td>👻</td><td>-4칸</td></tr>
+            <tr><td>bp04</td><td>순환 정체</td><td>⏳</td><td>턴+2</td></tr>
+            <tr><td>bp05</td><td>미로</td><td>🌀</td><td>-5칸</td></tr>
+            <tr><td>bp06</td><td>순환 역행</td><td>↩️</td><td>-3칸</td></tr>
+            <tr><td>bp07</td><td>지진</td><td>🌋</td><td>-6칸</td></tr>
+            <tr><td>bp08</td><td>낙석</td><td>🪨</td><td>-4칸</td></tr>
+            <tr><td>bp09</td><td>심연</td><td>⚫</td><td>-10칸</td></tr>
+            <tr><td>bp10</td><td>돌풍</td><td>🌪️</td><td>-7칸</td></tr>
+        </table>
+    </section>
+    
+    <footer style="text-align: center; margin-top: 40px; padding: 20px; color: #666; border-top: 1px solid #eee;">
+        <p>12-DICE 이벤트 보고서 | 생성일: 2026-02-17</p>
+        <p>총 156개 이벤트 | 밸런스 v15f 기준</p>
+    </footer>
+</body>
+</html>
