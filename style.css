@@ -980,6 +980,72 @@ body {
 }
 
 /* ============================================ */
+/* 네비게이션 바 */
+/* ============================================ */
+
+.main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+}
+
+.nav-brand {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.nav-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    color: var(--accent);
+    background: rgba(233, 69, 96, 0.2);
+}
+
+.lang-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lang-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* ============================================ */
 /* 시작 화면 모달 */
 /* ============================================ */
 
@@ -1678,3 +1744,138 @@ body {
         font-size: 4rem;
     }
 }
+/* ============================================ */
+/* 네비게이션 바 */
+/* ============================================ */
+
+.main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+}
+
+.nav-brand {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.nav-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-link.active {
+    color: var(--accent);
+    background: rgba(233, 69, 96, 0.2);
+}
+
+.lang-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lang-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* ============================================ */
+/* 푸터 최종 스타일 */
+/* ============================================ */
+
+.game-footer {
+    width: 100%;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px 20px;
+    margin-top: 40px;
+    text-align: center;
+}
+
+.footer-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.footer-brand {
+    margin-bottom: 16px;
+}
+
+.footer-brand span:first-child {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-right: 12px;
+}
+
+.footer-copyright {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.footer-links {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--accent);
+}
+
+.footer-divider {
+    color: var(--text-secondary);
+    opacity: 0.3;
+    margin: 0 12px;
+}
+
+.footer-developer {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.footer-developer a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.footer-developer a:hover {
+    text-decoration: underline;
+}
+
