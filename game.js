@@ -59,7 +59,7 @@ class Game {
         this.elements.resultButton.addEventListener('click', () => this.restart());
         this.elements.tapButton.addEventListener('click', () => this.handleTap());
         
-        this.createBoard();
+        this.updateBoard();
         this.addLog('system', '"안녕! 5턴 안에 12칸 도달하면 승리야... 아, 참고로 난 친절하지 않아." 😈');
     }
     
