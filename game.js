@@ -1253,6 +1253,7 @@ class Game {
         } else if (r.newDice) {
             this.currentDice = { ...r.newDice };
             this.updateDiceInfo();
+            this.animateDiceChange(); // 주사위 변경 애니메이션
             this.addLog('event', `주사위: "${this.currentDice.name}"`);
             this.movePlayer(dice);
         } else if (r.forceNext) {
@@ -1260,7 +1261,9 @@ class Game {
             this.addLog('event', `다음: ${this.forceDice.name}`);
             this.movePlayer(dice);
         } else if (r.addTurns) {
+            const oldMaxTurns = this.maxTurns;
             this.maxTurns += r.addTurns;
+            this.animateTurnChange(oldMaxTurns, this.maxTurns); // 턴 변경 애니메이션
             this.addLog('event', `턴 +${r.addTurns}! (${this.maxTurns}턴)`);
             this.movePlayer(dice);
         } else if (r.extendGoal) {
@@ -1268,6 +1271,13 @@ class Game {
             this.goalPosition = 18;
             this.addLog('event', '골→18칸!');
             this.updateBoard();
+            // 골 변경 애니메이션
+            setTimeout(() => {
+                const goalCell = document.querySelector('.cell.goal');
+                if (goalCell) {
+                    goalCell.classList.add('goal-extended');
+                }
+            }, 100);
             this.movePlayer(dice);
         } else if (r.skipTurns) {
             this.turn += r.skipTurns;
@@ -1672,7 +1682,12 @@ class Game {
     }
     
     updateStatus() {
+        // 턴 카운터 업데이트 (maxTurns 반영)
         this.elements.currentTurn.textContent = this.turn;
+        const turnCounter = document.querySelector('.turn-counter');
+        if (turnCounter) {
+            turnCounter.innerHTML = `턴: <span id="currentTurn">${this.turn}</span>/${this.maxTurns}`;
+        }
         this.elements.currentPosition.textContent = this.position;
     }
     
@@ -1689,6 +1704,50 @@ class Game {
         if (this.currentDice.type) {
             this.elements.diceDisplay.classList.add(this.currentDice.type);
         }
+    }
+    
+    // 숫자 변경 애니메이션
+    animateValue(element, newValue, type = 'default') {
+        if (!element) return;
+        
+        element.textContent = newValue;
+        element.classList.add('value-changed', `change-${type}`);
+        
+        // 1초 후 클래스 제거
+        setTimeout(() => {
+            element.classList.remove('value-changed', `change-${type}`);
+        }, 1000);
+    }
+    
+    // 턴 변경 애니메이션
+    animateTurnChange(oldTurns, newTurns) {
+        const turnCounter = document.querySelector('.turn-counter');
+        if (turnCounter) {
+            turnCounter.classList.add('turn-changed');
+            turnCounter.innerHTML = `턴: <span id="currentTurn">${this.turn}</span>/<span class="max-turns">${this.maxTurns}</span>`;
+            
+            // 애니메이션 효과
+            const maxTurnsSpan = turnCounter.querySelector('.max-turns');
+            if (maxTurnsSpan) {
+                maxTurnsSpan.classList.add('value-increase');
+            }
+            
+            setTimeout(() => {
+                turnCounter.classList.remove('turn-changed');
+                if (maxTurnsSpan) maxTurnsSpan.classList.remove('value-increase');
+            }, 1000);
+        }
+    }
+    
+    // 주사위 변경 애니메이션
+    animateDiceChange() {
+        this.elements.diceDisplay.classList.add('dice-changed');
+        this.elements.diceInfo.classList.add('dice-info-changed');
+        
+        setTimeout(() => {
+            this.elements.diceDisplay.classList.remove('dice-changed');
+            this.elements.diceInfo.classList.remove('dice-info-changed');
+        }, 1000);
     }
     
     addLog(type, msg) {
