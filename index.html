@@ -8,95 +8,80 @@
     <meta name="author" content="occurpare@naver.com">
     <title>12 DICE - 156 Events Edition</title>
     <link rel="stylesheet" href="style.css">
-    
-    <!-- 언어 팩 -->
-    <script src="lang/ko.js"></script>
-    <script src="lang/en.js"></script>
 </head>
 <body>
-    <!-- 네비게이션 -->
-    <nav class="main-nav" id="mainNav">
-        <div class="nav-brand">🎲 12 DICE</div>
-        <div class="nav-links">
-            <a href="index.html" class="nav-link active" data-i18n="nav.game">🎮 게임</a>
-            <a href="pages/guide.html" class="nav-link" data-i18n="nav.guide">📖 가이드</a>
-            <a href="pages/faq.html" class="nav-link" data-i18n="nav.faq">❓ FAQ</a>
-            <button class="lang-btn" id="langBtn" title="Change Language">🌐</button>
-        </div>
-    </nav>
-    
     <!-- 시작 화면 모달 -->
     <div class="intro-modal" id="introModal">
         <div class="intro-content">
             <div class="intro-header">
                 <span class="intro-icon">🎲</span>
-                <h1 data-i18n="title">12 DICE</h1>
-                <span class="intro-version" data-i18n="version">v15f - 156 Events</span>
+                <h1>12 DICE</h1>
+                <span class="intro-version">v15f - 156 Events</span>
             </div>
             
             <div class="intro-rules">
-                <h2 data-i18n="rulesTitle">📋 게임 규칙</h2>
+                <h2>📋 게임 규칙</h2>
                 <ul>
-                    <li><strong data-i18n="rules.goal">목표:</strong> <span data-i18n="rules.goalText">5턴 안에</span> <span class="highlight-goal" data-i18n="rules.goalHighlight">12칸</span>에 도달하세요!</li>
-                    <li><strong data-i18n="rules.dice">주사위:</strong> <span data-i18n="rules.diceText">기본 1~6, 이벤트로 변경될 수 있습니다</span></li>
-                    <li><strong data-i18n="rules.events">이벤트:</strong> <span data-i18n="rules.eventsText">매 턴 다양한 이벤트가 발생합니다</span></li>
-                    <li><strong data-i18n="rules.bypass">우회 루트:</strong> <span data-i18n="rules.bypassText">12칸 초과 시 3~6칸 우회로가 생성됩니다</span></li>
+                    <li><strong>목표:</strong> 5턴 안에 <span class="highlight-goal">12칸</span>에 도달하세요!</li>
+                    <li><strong>주사위:</strong> 기본 1~6, 이벤트로 변경될 수 있습니다</li>
+                    <li><strong>이벤트:</strong> 매 턴 다양한 이벤트가 발생합니다</li>
+                    <li><strong>우회 루트:</strong> 12칸 초과 시 3~6칸 우회로가 생성됩니다</li>
                 </ul>
             </div>
             
             <div class="intro-cats">
-                <h2 data-i18n="categoriesTitle">🎯 이벤트 카테고리</h2>
+                <h2>🎯 이벤트 카테고리</h2>
                 <div class="cat-grid">
                     <div class="cat-item positive">
                         <span class="cat-icon">✅</span>
-                        <span class="cat-name" data-i18n="categories.positive.name">긍정적</span>
-                        <span class="cat-count" data-i18n="categories.positive.count">20개</span>
+                        <span class="cat-name">긍정적</span>
+                        <span class="cat-count">20개</span>
                     </div>
                     <div class="cat-item neutral">
                         <span class="cat-icon">⚖️</span>
-                        <span class="cat-name" data-i18n="categories.neutral.name">중립적</span>
-                        <span class="cat-count" data-i18n="categories.neutral.count">20개</span>
+                        <span class="cat-name">중립적</span>
+                        <span class="cat-count">20개</span>
                     </div>
                     <div class="cat-item negative">
                         <span class="cat-icon">❌</span>
-                        <span class="cat-name" data-i18n="categories.negative.name">부정적</span>
-                        <span class="cat-count" data-i18n="categories.negative.count">38개</span>
+                        <span class="cat-name">부정적</span>
+                        <span class="cat-count">38개</span>
                     </div>
                     <div class="cat-item despair">
                         <span class="cat-icon">😱</span>
-                        <span class="cat-name" data-i18n="categories.despair.name">절망</span>
-                        <span class="cat-count" data-i18n="categories.despair.count">12개</span>
+                        <span class="cat-name">절망</span>
+                        <span class="cat-count">12개</span>
                     </div>
                     <div class="cat-item special">
                         <span class="cat-icon">⭐</span>
-                        <span class="cat-name" data-i18n="categories.special.name">특별</span>
-                        <span class="cat-count" data-i18n="categories.special.count">12개</span>
+                        <span class="cat-name">특별</span>
+                        <span class="cat-count">12개</span>
                     </div>
                     <div class="cat-item blocker">
                         <span class="cat-icon">🛑</span>
-                        <span class="cat-name" data-i18n="categories.blocker.name">방해</span>
-                        <span class="cat-count" data-i18n="categories.blocker.count">44개</span>
+                        <span class="cat-name">방해</span>
+                        <span class="cat-count">44개</span>
                     </div>
                 </div>
             </div>
             
             <div class="intro-tips">
-                <h2 data-i18n="tipsTitle">💡 팁</h2>
+                <h2>💡 팁</h2>
                 <ul>
-                    <li data-i18n="tips.0">초반에는 <span class="tip-good">초기 장애물</span> 이벤트가 많이 나옵니다</li>
-                    <li data-i18n="tips.1">종반에는 <span class="tip-bad">클리어 방해</span> 이벤트가 강해집니다</li>
-                    <li data-i18n="tips.2">주사위가 바뀌면 전략이 달라집니다!</li>
-                    <li data-i18n="tips.3">이벤트 팝업을 클릭하면 빠르게 넘길 수 있습니다</li>
+                    <li>초반에는 <span class="tip-good">초기 장애물</span> 이벤트가 많이 나옵니다</li>
+                    <li>종반에는 <span class="tip-bad">클리어 방해</span> 이벤트가 강해집니다</li>
+                    <li>주사위가 바뀌면 전략이 달라집니다!</li>
+                    <li>이벤트 팝업을 클릭하면 빠르게 넘길 수 있습니다</li>
                 </ul>
             </div>
             
-            <button class="intro-start-btn" id="startGameBtn" data-i18n="buttons.startGame">
+            <button class="intro-start-btn" id="startGameBtn">
                 🎮 게임 시작
             </button>
             
             <label class="intro-checkbox">
                 <input type="checkbox" id="skipIntroCheckbox">
-                <span data-i18n="buttons.dontShowAgain">다시 보지 않기</span>
+                <span>다시 보지 않기</span>
             </label>
         </div>
     </div>
@@ -110,8 +95,8 @@
                 <button class="help-btn" id="helpBtn" title="게임 규칙">❓</button>
             </div>
             <div class="status-bar">
-                <div class="turn-counter"><span data-i18n="status.turn">턴:</span> <span id="currentTurn">1</span>/5</div>
-                <div class="position"><span data-i18n="status.position">위치:</span> <span id="currentPosition">0</span><span data-i18n="status.space">칸</span></div>
+                <div class="turn-counter">턴: <span id="currentTurn">1</span>/5</div>
+                <div class="position">위치: <span id="currentPosition">0</span>칸</div>
                 <div class="progress-container">
                     <div class="progress-bar">
                         <div class="progress-fill" id="progressFill"></div>
@@ -132,23 +117,23 @@
                 <span id="diceValue">?</span>
             </div>
             <div class="dice-info" id="diceInfo">
-                <span class="dice-type" id="diceType" data-i18n="diceTypes.normal">기본 주사위 (1~6)</span>
+                <span class="dice-type" id="diceType">기본 주사위 (1~6)</span>
             </div>
         </div>
 
         <!-- 현재 상태 요약 -->
         <div class="status-summary" id="statusSummary">
             <div class="summary-item">
-                <span class="summary-label" data-i18n="status.distanceLeft">🎯 남은 거리</span>
+                <span class="summary-label">🎯 남은 거리</span>
                 <span class="summary-value" id="distanceLeft">12칸</span>
             </div>
             <div class="summary-item">
-                <span class="summary-label" data-i18n="status.eventChance">📊 발동 확률</span>
+                <span class="summary-label">📊 발동 확률</span>
                 <span class="summary-value" id="eventChance">92%</span>
             </div>
             <div class="summary-item">
-                <span class="summary-label" data-i18n="status.eventCount">📜 이벤트</span>
-                <span class="summary-value" id="eventCount">0<span data-i18n="status.events">회</span></span>
+                <span class="summary-label">📜 이벤트</span>
+                <span class="summary-value" id="eventCount">0회</span>
             </div>
         </div>
 
@@ -156,7 +141,7 @@
         <div class="log-area" id="logArea">
             <div class="log-item system">
                 <span class="developer-avatar">👨‍💻</span>
-                <span class="log-text" data-i18n="messages.welcome">"안녕하세요! 5턴 안에 12칸에 도달하면 승리합니다!"</span>
+                <span class="log-text">안녕하세요! 5턴 안에 12칸에 도달하면 승리합니다!</span>
             </div>
         </div>
 
@@ -166,7 +151,7 @@
                 <!-- 동적으로 변경 -->
             </div>
             <div class="tap-area hidden" id="tapArea">
-                <div class="tap-button" id="tapButton" data-i18n="messages.tapFast">연타하세요!!</div>
+                <div class="tap-button" id="tapButton">연타하세요!!</div>
                 <div class="tap-progress">
                     <div class="tap-bar" id="tapBar"></div>
                 </div>
@@ -178,19 +163,19 @@
 
         <!-- 버튼 영역 -->
         <div class="button-area">
-            <button class="roll-button" id="rollButton" data-i18n="buttons.rollDice">🎲 주사위 굴리기</button>
+            <button class="roll-button" id="rollButton">🎲 주사위 굴리기</button>
             <button class="history-btn" id="historyBtn" title="이벤트 기록">📜 기록</button>
-            <button class="restart-button hidden" id="restartButton" data-i18n="buttons.restart">🔄 다시 시작</button>
+            <button class="restart-button hidden" id="restartButton">🔄 다시 시작</button>
         </div>
 
         <!-- 결과 화면 -->
         <div class="result-screen hidden" id="resultScreen">
             <div class="result-content">
                 <div class="result-icon" id="resultIcon">🎉</div>
-                <div class="result-text" id="resultText" data-i18n="result.victory">승리!</div>
-                <div class="result-detail" id="resultDetail" data-i18n="result.congratulations">축하합니다!</div>
+                <div class="result-text" id="resultText">승리!</div>
+                <div class="result-detail" id="resultDetail">축하합니다!</div>
                 <div class="result-stats" id="resultStats"></div>
-                <button class="result-button" id="resultButton" data-i18n="buttons.challengeAgain">다시 도전</button>
+                <button class="result-button" id="resultButton">다시 도전</button>
             </div>
         </div>
     </div>
@@ -198,71 +183,31 @@
     <!-- 이벤트 기록 패널 -->
     <div class="history-panel hidden" id="historyPanel">
         <div class="history-header">
-            <h3 data-i18n="history.title">📜 이벤트 기록</h3>
+            <h3>📜 이벤트 기록</h3>
             <button class="history-close" id="historyClose">✕</button>
         </div>
         <div class="history-list" id="historyList">
             <!-- 동적으로 생성 -->
         </div>
     </div>
-    
+
     <!-- 푸터 -->
     <footer class="game-footer">
-        <div class="footer-content">
-            <div class="footer-brand">
-                <span>🎲 12 DICE</span>
-                <span class="footer-copyright" data-i18n="footer.copyright">© 2026 12 DICE. All rights reserved.</span>
-            </div>
-            <div class="footer-links">
-                <a href="pages/privacy.html" data-i18n="footer.legal.privacy">개인정보처리방침</a>
-                <a href="pages/terms.html" data-i18n="footer.legal.terms">이용약관</a>
-                <a href="pages/cookies.html" data-i18n="footer.legal.cookies">쿠키 정책</a>
-            </div>
-            <div class="footer-developer">
-                <span data-i18n="footer.developer">개발자</span>: <a href="mailto:occurpare@naver.com">occurpare@naver.com</a>
-            </div>
+        <div class="footer-links">
+            <a href="pages/privacy.html">개인정보처리방침</a>
+            <span class="footer-divider">|</span>
+            <a href="pages/terms.html">이용약관</a>
+            <span class="footer-divider">|</span>
+            <a href="pages/cookies.html">쿠키 정책</a>
+        </div>
+        <div class="footer-developer">
+            개발자: <a href="mailto:occurpare@naver.com">occurpare@naver.com</a>
         </div>
     </footer>
 
     <script src="game.js"></script>
     <script>
-        // ==================== 언어 시스템 ====================
-        let currentLang = localStorage.getItem('currentLang') || 'ko';
-        
-        function setLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('currentLang', lang);
-            const langPack = lang === 'ko' ? LANG_KO : LANG_EN;
-            
-            // data-i18n 속성을 가진 모든 요소 업데이트
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                const value = key.split('.').reduce((obj, k) => obj && obj[k], langPack);
-                if (value) {
-                    if (typeof value === 'object') {
-                        // 객체인 경우 내부 처리
-                    } else {
-                        el.innerHTML = value;
-                    }
-                }
-            });
-            
-            // HTML lang 속성 변경
-            document.documentElement.lang = lang;
-            
-            // 언어 버튼 텍스트 업데이트
-            document.getElementById('langBtn').textContent = lang === 'ko' ? 'EN' : '한';
-        }
-        
-        // 언어 버튼 이벤트
-        document.getElementById('langBtn').addEventListener('click', () => {
-            setLanguage(currentLang === 'ko' ? 'en' : 'ko');
-        });
-        
-        // 초기 언어 설정
-        setLanguage(currentLang);
-        
-        // ==================== 인트로 모달 관리 ====================
+        // 인트로 모달 관리
         const introModal = document.getElementById('introModal');
         const startGameBtn = document.getElementById('startGameBtn');
         const skipIntroCheckbox = document.getElementById('skipIntroCheckbox');
@@ -301,14 +246,15 @@
         
         // 진행률 업데이트
         function updateProgress() {
-            const position = window.game ? window.game.position : 0;
-            const goal = window.game ? window.game.goalPosition : 12;
+            if (!window.game) return;
+            const position = window.game.position || 0;
+            const goal = window.game.goalPosition || 12;
             const progress = Math.min(100, Math.round((position / goal) * 100));
             
             document.getElementById('progressFill').style.width = progress + '%';
             document.getElementById('progressText').textContent = progress + '%';
-            document.getElementById('distanceLeft').textContent = Math.max(0, goal - position) + (currentLang === 'ko' ? '칸' : ' spaces');
-            document.getElementById('eventCount').textContent = (window.game ? window.game.eventHistory.length : 0) + (currentLang === 'ko' ? '회' : ' times');
+            document.getElementById('distanceLeft').textContent = Math.max(0, goal - position) + '칸';
+            document.getElementById('eventCount').textContent = (window.game.eventHistory ? window.game.eventHistory.length : 0) + '회';
             
             // 발동 확률 업데이트
             let chance = 92;
@@ -322,21 +268,21 @@
         function updateHistoryPanel() {
             const historyList = document.getElementById('historyList');
             if (!window.game || !window.game.eventHistory) {
-                historyList.innerHTML = '<div class="history-empty" data-i18n="history.empty">아직 이벤트가 없습니다</div>';
+                historyList.innerHTML = '<div class="history-empty">아직 이벤트가 없습니다</div>';
                 return;
             }
             
             const categories = {
-                'p': { name: currentLang === 'ko' ? '긍정적' : 'Positive', class: 'positive', icon: '✅' },
-                'n': { name: currentLang === 'ko' ? '중립적' : 'Neutral', class: 'neutral', icon: '⚖️' },
-                'e': { name: currentLang === 'ko' ? '부정적' : 'Negative', class: 'negative', icon: '❌' },
-                'd': { name: currentLang === 'ko' ? '절망' : 'Despair', class: 'despair', icon: '😱' },
-                's': { name: currentLang === 'ko' ? '특별' : 'Special', class: 'special', icon: '⭐' },
-                'r': { name: currentLang === 'ko' ? '초기' : 'Early', class: 'early', icon: '🚧' },
-                't': { name: currentLang === 'ko' ? '턴압박' : 'Turn Pressure', class: 'turnPressure', icon: '⏰' },
-                'c': { name: currentLang === 'ko' ? '저주' : 'Curse', class: 'curse', icon: '🔮' },
-                'b': { name: currentLang === 'ko' ? '방해' : 'Blocker', class: 'blocker', icon: '🛑' },
-                'bp': { name: currentLang === 'ko' ? '우회' : 'Bypass', class: 'bypass', icon: '🔄' }
+                'p': { name: '긍정적', class: 'positive', icon: '✅' },
+                'n': { name: '중립적', class: 'neutral', icon: '⚖️' },
+                'e': { name: '부정적', class: 'negative', icon: '❌' },
+                'd': { name: '절망', class: 'despair', icon: '😱' },
+                's': { name: '특별', class: 'special', icon: '⭐' },
+                'r': { name: '초기', class: 'early', icon: '🚧' },
+                't': { name: '턴압박', class: 'turnPressure', icon: '⏰' },
+                'c': { name: '저주', class: 'curse', icon: '🔮' },
+                'b': { name: '방해', class: 'blocker', icon: '🛑' },
+                'bp': { name: '우회', class: 'bypass', icon: '🔄' }
             };
             
             // 이벤트 라이브러리에서 이름 찾기
@@ -352,7 +298,7 @@
             const history = window.game.eventHistory;
             
             if (history.length === 0) {
-                html = '<div class="history-empty">' + (currentLang === 'ko' ? '아직 이벤트가 없습니다' : 'No events yet') + '</div>';
+                html = '<div class="history-empty">아직 이벤트가 없습니다</div>';
             } else {
                 history.forEach((id, index) => {
                     const event = allEvents.find(e => e.id === id);
@@ -363,7 +309,7 @@
                         <div class="history-item ${cat.class}">
                             <span class="history-icon">${event ? event.icon : '❓'}</span>
                             <span class="history-name">${event ? event.name : id}</span>
-                            <span class="history-turn">${currentLang === 'ko' ? '턴' : 'Turn'} ${index + 1}</span>
+                            <span class="history-turn">턴 ${index + 1}</span>
                         </div>
                     `;
                 });
@@ -372,21 +318,27 @@
             historyList.innerHTML = html;
         }
         
-        // 게임 업데이트 훅
-        const originalUpdateStatus = Game.prototype.updateStatus;
-        Game.prototype.updateStatus = function() {
-            originalUpdateStatus.call(this);
-            updateProgress();
-        };
-        
-        const originalAddLog = Game.prototype.addLog;
-        Game.prototype.addLog = function(type, msg) {
-            originalAddLog.call(this, type, msg);
-            updateHistoryPanel();
-        };
-        
-        // 초기 진행률 설정
-        setTimeout(updateProgress, 100);
+        // 게임 업데이트 훅 - DOMContentLoaded 이후에 실행
+        document.addEventListener('DOMContentLoaded', () => {
+            // 약간의 지연 후 훅 설치 (game.js가 먼저 초기화되도록)
+            setTimeout(() => {
+                if (window.game) {
+                    const originalUpdateStatus = Game.prototype.updateStatus;
+                    Game.prototype.updateStatus = function() {
+                        originalUpdateStatus.call(this);
+                        updateProgress();
+                    };
+                    
+                    const originalAddLog = Game.prototype.addLog;
+                    Game.prototype.addLog = function(type, msg) {
+                        originalAddLog.call(this, type, msg);
+                        updateHistoryPanel();
+                    };
+                    
+                    updateProgress();
+                }
+            }, 100);
+        });
     </script>
 </body>
 </html>
