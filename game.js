@@ -1304,6 +1304,31 @@ class Game {
         } else if (r.pause) {
             this.addLog('event', `${r.pause}초 정지...`);
             setTimeout(() => this.movePlayer(dice), r.pause * 1000);
+        } else if (r.movePenalty) {
+            // 이동 페널티 (지속 효과)
+            this.addActiveEffect('movePenalty', '무거운 발걸음', '🥾', r.movePenalty, 'debuff');
+            this.addLog('event', `🥾 ${r.movePenalty}턴간 이동 -1!`);
+            this.movePlayer(dice - 1);
+        } else if (r.blockPositive) {
+            // 긍정적 이벤트 차단 (지속 효과)
+            this.addActiveEffect('blockPositive', '마법 억제', '✨❌', r.blockPositive, 'debuff');
+            this.addLog('event', `✨❌ ${r.blockPositive}턴간 긍정 이벤트 차단!`);
+            this.movePlayer(dice);
+        } else if (r.diceOdd) {
+            // 홀수만 나오는 주사위 (지속 효과)
+            this.addActiveEffect('diceOdd', '저주받은 주사위', '🎲💀', 5, 'debuff');
+            this.addLog('event', `🎲💀 5턴간 홀수만!`);
+            this.movePlayer(dice);
+        } else if (r.reverseNext) {
+            // 다음 주사위 역전 (1회성)
+            this.addActiveEffect('reverseNext', '역주행 징조', '⬅️', 2, 'debuff');
+            this.addLog('event', `⬅️ 다음 2턴 주사위 반대!`);
+            this.movePlayer(dice);
+        } else if (r.unstableDice) {
+            // 불안정 주사위 (지속 효과)
+            this.addActiveEffect('unstableDice', '불안정 주사위', '🎲↔️', 3, 'debuff');
+            this.addLog('event', `🎲↔️ 3턴간 50% 반전!`);
+            this.movePlayer(dice);
         } else {
             this.movePlayer(dice);
         }
