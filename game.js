@@ -329,7 +329,7 @@ class Game {
                     id: 'n20', name: '신비의 숫자', icon: '🔢✨',
                     cond: (p,d,t) => d===t,
                     msg: d => `"주사위와 턴 번호가 같아! ${d}! 이거 우연 아니야!"`,
-                    fx: () => ({ bonus: t })
+                    fx: () => ({ bonus: this.turn })
                 }
             ],
             
@@ -1238,7 +1238,18 @@ class Game {
             this.movePlayer(dice + r.bonus);
         } else if (r.pushBack) {
             this.addLog('event', `${r.pushBack}칸 후퇴...`);
-            this.movePlayer(-r.pushBack, true); // isEventRecoil = true
+            // 주사위 값에서 pushBack을 뺀 만큼 이동
+            const netMove = dice - r.pushBack;
+            if (netMove > 0) {
+                this.movePlayer(netMove);
+            } else {
+                // 후퇴이면 현재 위치에서 후퇴
+                this.position = Math.max(0, this.position - r.pushBack);
+                this.updateBoard();
+                this.updateStatus();
+                this.addLog('player', `${r.pushBack}칸 후퇴 → ${this.position}`);
+                this.endTurn();
+            }
         } else if (r.newDice) {
             this.currentDice = { ...r.newDice };
             this.updateDiceInfo();
