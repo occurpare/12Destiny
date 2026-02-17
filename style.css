@@ -1880,3 +1880,27 @@ body {
     text-decoration: underline;
 }
 
+
+.event-confirm-btn {
+    margin-top: 20px;
+    padding: 12px 32px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.event-confirm-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.event-confirm-btn:active {
+    transform: translateY(0);
+}
+

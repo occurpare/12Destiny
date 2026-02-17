@@ -1185,6 +1185,7 @@ class Game {
                     <span class="event-icon-large">${icon}</span>
                 </div>
                 <div class="event-message-large">${msg}</div>
+                <button class="event-confirm-btn" id="eventConfirmBtn">✅ 확인</button>
             </div>
         `;
         this.elements.tapArea.classList.add('hidden');
@@ -1192,22 +1193,21 @@ class Game {
         this.elements.eventArea.classList.remove('hidden');
         this.elements.eventArea.classList.add('event-active');
         
-        // 클릭 시 즉시 닫기
-        this.elements.eventArea.onclick = () => {
+        // 확인 버튼 클릭 시 진행
+        const confirmBtn = document.getElementById('eventConfirmBtn');
+        confirmBtn.onclick = () => {
             this.elements.eventArea.classList.add('hidden');
             this.elements.eventArea.classList.remove('event-active');
             this.elements.eventArea.onclick = null;
             callback();
         };
         
-        // 2초 후 자동 닫기
-        setTimeout(() => {
-            if (this.elements.eventArea.classList.contains('event-active')) {
-                this.elements.eventArea.classList.add('hidden');
-                this.elements.eventArea.classList.remove('event-active');
-                callback();
+        // 이벤트 영역 클릭으로도 가능
+        this.elements.eventArea.onclick = (e) => {
+            if (e.target === this.elements.eventArea || e.target.classList.contains('event-popup')) {
+                confirmBtn.click();
             }
-        }, 2000);
+        };
     }
     
     getEventType(eventId) {
