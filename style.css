@@ -141,9 +141,8 @@ body {
 }
 
 .dice-container .log-area {
-    flex: 1;
-    min-height: 180px;
-    max-height: 280px;
+    min-height: 150px;
+    max-height: 200px;
     overflow-y: auto;
     background: var(--bg-secondary);
     border-radius: 16px;

@@ -1476,6 +1476,48 @@ class Game {
         this.updateStatus();
         this.isRolling = false;
         this.elements.rollButton.disabled = false;
+        
+        // 다음 턴 예고
+        this.showNextTurnPreview();
+    }
+    
+    // 다음 턴에 발생할 수 있는 특별 이벤트 예고
+    showNextTurnPreview() {
+        const previews = [];
+        const lib = this.getEventLibrary();
+        
+        // 턴 압박 이벤트 체크
+        lib.turnPressure.forEach(e => {
+            try {
+                if (e.cond(this.position, 1, this.turn) || e.cond(this.position, 6, this.turn)) {
+                    previews.push(`⚠️ ${e.name}: 이번 턴 가능`);
+                }
+            } catch {}
+        });
+        
+        // 특수 이벤트 체크
+        lib.special.forEach(e => {
+            try {
+                if (e.cond(this.position, 1, this.turn) || e.cond(this.position, 6, this.turn)) {
+                    previews.push(`✨ ${e.name}: 이번 턴 가능`);
+                }
+            } catch {}
+        });
+        
+        // 저주 이벤트 체크
+        lib.curse.forEach(e => {
+            try {
+                if (e.cond(this.position, 1, this.turn) || e.cond(this.position, 6, this.turn)) {
+                    previews.push(`👻 ${e.name}: 이번 턴 가능`);
+                }
+            } catch {}
+        });
+        
+        // 미리보기 표시 (최대 3개)
+        if (previews.length > 0) {
+            const display = previews.slice(0, 3);
+            display.forEach(p => this.addLog('system', p));
+        }
     }
     
     // ==================== 미니게임 ====================
