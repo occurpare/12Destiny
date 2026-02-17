@@ -1179,18 +1179,22 @@ class Game {
         this.elements.eventArea.classList.remove('hidden');
         this.elements.eventArea.classList.add('event-active');
         
-        // 3초 후 자동 닫기 (클릭으로 빠르게 닫기 가능)
+        // 클릭 시 즉시 닫기
         this.elements.eventArea.onclick = () => {
-            if (this.elements.eventArea.classList.contains('event-active')) {
-                this.elements.eventArea.classList.add('event-closing');
-                setTimeout(() => {
-                    this.elements.eventArea.classList.add('hidden');
-                    this.elements.eventArea.classList.remove('event-active', 'event-closing');
-                    this.elements.eventArea.onclick = null;
-                    callback();
-                }, 200);
-            }
+            this.elements.eventArea.classList.add('hidden');
+            this.elements.eventArea.classList.remove('event-active');
+            this.elements.eventArea.onclick = null;
+            callback();
         };
+        
+        // 2초 후 자동 닫기
+        setTimeout(() => {
+            if (this.elements.eventArea.classList.contains('event-active')) {
+                this.elements.eventArea.classList.add('hidden');
+                this.elements.eventArea.classList.remove('event-active');
+                callback();
+            }
+        }, 2000);
     }
     
     getEventType(eventId) {
