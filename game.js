@@ -42,12 +42,13 @@ class Game {
     // ==================== 전략 카드 라이브러리 ====================
     getCardLibrary() {
         return [
-            // 🎲 주사위 카드 (4장)
+            // 🎲 주사위 카드 (4장) - 굴린 후 사용
             {
                 id: 'reroll',
                 name: '🎲 리롤',
                 icon: '🎲',
                 desc: '주사위 다시 굴리기',
+                timing: '주사위 굴린 후',
                 type: 'dice',
                 effect: 'reroll'
             },
@@ -56,6 +57,7 @@ class Game {
                 name: '🎲 조작',
                 icon: '🎲',
                 desc: '주사위 값 ±1 조정',
+                timing: '주사위 굴린 후',
                 type: 'dice',
                 effect: 'manipulate'
             },
@@ -64,6 +66,7 @@ class Game {
                 name: '🎲 범위',
                 icon: '🎲',
                 desc: '다음 주사위 4~6만 나옴',
+                timing: '주사위 굴리기 전',
                 type: 'dice',
                 effect: 'range'
             },
@@ -72,16 +75,18 @@ class Game {
                 name: '🎲 복제',
                 icon: '🎲',
                 desc: '주사위 값만큼 추가 이동',
+                timing: '주사위 굴린 후',
                 type: 'dice',
                 effect: 'duplicate'
             },
             
-            // 🛡️ 이벤트 방어 카드 (3장)
+            // 🛡️ 이벤트 방어 카드 (3장) - 이벤트 발생 시 사용
             {
                 id: 'block',
                 name: '🛡️ 차단',
                 icon: '🛡️',
                 desc: '이번 이벤트 무시',
+                timing: '이벤트 발생 시',
                 type: 'defense',
                 effect: 'block'
             },
@@ -90,6 +95,7 @@ class Game {
                 name: '🛡️ 전환',
                 icon: '🛡️',
                 desc: '부정→긍정 이벤트로 변경',
+                timing: '이벤트 발생 시',
                 type: 'defense',
                 effect: 'convert'
             },
@@ -98,16 +104,18 @@ class Game {
                 name: '🛡️ 감소',
                 icon: '🛡️',
                 desc: '이벤트 효과 절반으로 감소',
+                timing: '이벤트 발생 시',
                 type: 'defense',
                 effect: 'reduce'
             },
             
-            // 🍀 운 강화 카드 (3장)
+            // 🍀 운 강화 카드 (3장) - 언제든 사용
             {
                 id: 'lucky',
                 name: '🍀 행운',
                 icon: '🍀',
                 desc: '다음 턴 긍정 이벤트 100%',
+                timing: '언제든',
                 type: 'luck',
                 effect: 'lucky'
             },
@@ -116,6 +124,7 @@ class Game {
                 name: '🍀 역전',
                 icon: '🍀',
                 desc: '후퇴→전진으로 변경',
+                timing: '언제든',
                 type: 'luck',
                 effect: 'reverse'
             },
@@ -124,6 +133,7 @@ class Game {
                 name: '🍀 축복',
                 icon: '🍀',
                 desc: '이동 후 +1~2칸 추가',
+                timing: '이동 후',
                 type: 'luck',
                 effect: 'bless'
             }
@@ -340,11 +350,13 @@ class Game {
         
         this.hand.forEach((card, index) => {
             const cardEl = document.createElement('div');
-            cardEl.className = 'strategy-card';
+            cardEl.className = `strategy-card card-${card.type}`;
+            cardEl.dataset.type = card.type;
             cardEl.innerHTML = `
                 <div class="card-icon">${card.icon}</div>
                 <div class="card-name">${card.name}</div>
                 <div class="card-desc">${card.desc}</div>
+                <div class="card-timing">⏱️ ${card.timing}</div>
             `;
             cardEl.onclick = () => this.onCardClick(card.uid);
             handArea.appendChild(cardEl);
@@ -362,19 +374,66 @@ class Game {
         const card = this.hand.find(c => c.uid === cardUid);
         if (!card) return;
         
-        // 대기 중인 이벤트가 있으면 카드 사용 가능
-        if (this.pendingEvent) {
-            this.useCard(cardUid);
-        } else if (this.cardUsedThisTurn) {
-            this.addLog('system', '이번 턴에는 이미 카드를 사용했습니다.');
-        } else {
-            // 이벤트 없이도 사용 가능한 카드인지 확인
-            const noEventCards = ['range', 'lucky', 'reverse', 'bless', 'reroll'];
-            if (noEventCards.includes(card.effect)) {
+        // 이미 카드를 사용했으면 불가
+        if (this.cardUsedThisTurn) {
+            this.addLog('system', '⚠️ 이번 턴에는 이미 카드를 사용했습니다.');
+            return;
+        }
+        
+        // 카드 타이밍 체크
+        const timing = card.timing;
+        
+        // 이벤트 발생 시 카드
+        if (timing === '이벤트 발생 시') {
+            if (this.pendingEvent) {
                 this.useCard(cardUid);
             } else {
-                this.addLog('system', '이벤트 발생 후에 사용할 수 있습니다.');
+                this.addLog('system', '⚠️ 이벤트 발생 시에만 사용할 수 있습니다.');
             }
+            return;
+        }
+        
+        // 주사위 굴리기 전 카드
+        if (timing === '주사위 굴리기 전') {
+            if (!this.isRolling && !this.pendingEvent) {
+                this.useCard(cardUid);
+            } else {
+                this.addLog('system', '⚠️ 주사위를 굴리기 전에만 사용할 수 있습니다.');
+            }
+            return;
+        }
+        
+        // 주사위 굴린 후 카드
+        if (timing === '주사위 굴린 후') {
+            if (this.lastDiceValue && !this.pendingEvent) {
+                this.useCard(cardUid);
+            } else {
+                this.addLog('system', '⚠️ 주사위를 굴린 후에 사용할 수 있습니다.');
+            }
+            return;
+        }
+        
+        // 이동 후 카드
+        if (timing === '이동 후') {
+            if (this.lastDiceValue && !this.pendingEvent) {
+                this.useCard(cardUid);
+            } else {
+                this.addLog('system', '⚠️ 이동 후에 사용할 수 있습니다.');
+            }
+            return;
+        }
+        
+        // 언제든 사용 가능
+        if (timing === '언제든') {
+            this.useCard(cardUid);
+            return;
+        }
+        
+        // 기본: 이벤트 발생 시
+        if (this.pendingEvent) {
+            this.useCard(cardUid);
+        } else {
+            this.addLog('system', '⚠️ 지금은 사용할 수 없습니다.');
         }
     }
     

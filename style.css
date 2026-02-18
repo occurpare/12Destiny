@@ -1665,6 +1665,19 @@ body {
     line-height: 1.3;
 }
 
+.card-timing {
+    font-size: 0.55rem;
+    color: var(--accent-dark);
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px dashed var(--border);
+}
+
+/* 카드 타입별 색상 */
+.card-dice .card-timing { color: #6c9ac9; }
+.card-defense .card-timing { color: #6cc989; }
+.card-luck .card-timing { color: #c9a86c; }
+
 /* 카드 타입별 색상 */
 .strategy-card[data-type="dice"]::before {
     background: #6c9ac9;
