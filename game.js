@@ -232,11 +232,14 @@ class Game {
             case 'reduce':
                 // 이벤트 효과 절반
                 if (this.pendingEvent) {
-                    this.addLog('event', `🎴 ${card.name} 사용! 효과 절반!`);
-                    this.cardUsedThisTurn = true;
-                    this.hand.splice(cardIndex, 1);
-                    this.updateHandUI();
-                    this.reduceEventEffect();
+                    const success = this.reduceEventEffect();
+                    if (success) {
+                        this.addLog('event', `🎴 ${card.name} 사용!`);
+                        this.cardUsedThisTurn = true;
+                        this.hand.splice(cardIndex, 1);
+                        this.updateHandUI();
+                    }
+                    // 실패 시 카드 사용 취소 (이미 로그에 메시지 출력됨)
                 }
                 return true;
                 
@@ -274,36 +277,78 @@ class Game {
     
     // 이벤트를 긍정으로 변경
     convertEventToPositive() {
-        if (!this.pendingEvent) return;
-        
-        // 긍정 이벤트로 교체
-        const positiveEvents = this.getEventLibrary().positive;
-        const newEvent = positiveEvents[this.r(0, positiveEvents.length - 1)];
+        if (!this.pendingEvent) return false;
         
         // 기존 이벤트 닫기
         this.elements.eventArea.classList.add('hidden');
+        this.elements.eventArea.classList.remove('event-active');
+        this.highlightHand(false);
+        
+        // 긍정 이벤트로 교체 (조건 체크 없이 랜덤)
+        const positiveEvents = this.getEventLibrary().positive;
+        const newEvent = positiveEvents[this.r(0, positiveEvents.length - 1)];
+        
+        // 이벤트 히스토리에서 기존 이벤트 제거
+        if (this.eventHistory.length > 0 && this.eventHistory[this.eventHistory.length - 1] === this.pendingEvent.event.id) {
+            this.eventHistory.pop();
+        }
+        
+        this.pendingEvent = null;
         
         // 새 이벤트 실행
         setTimeout(() => {
             this.executeEvent(newEvent, this.lastDiceValue);
         }, 300);
+        
+        return true;
     }
     
-    // 이벤트 효과 절반
+    // 이벤트 효과 절반 (칸 이동만)
     reduceEventEffect() {
         if (!this.pendingEvent) return;
         
-        // 효과 절반 플래그 설정 후 이벤트 적용
-        this.effectReducer = 0.5;
+        const { fxResult } = this.pendingEvent;
         
-        // 기존 이벤트 닫기
+        // 칸 이동 효과만 절반으로
+        let reduced = false;
+        
+        if (fxResult.bonus) {
+            fxResult.bonus = Math.max(1, Math.floor(fxResult.bonus / 2));
+            this.addLog('event', `🛡️ 감소! 보너스 → +${fxResult.bonus}칸`);
+            reduced = true;
+        }
+        if (fxResult.recoil) {
+            fxResult.recoil = -Math.max(1, Math.floor(Math.abs(fxResult.recoil) / 2));
+            this.addLog('event', `🛡️ 감소! 후퇴 → ${Math.abs(fxResult.recoil)}칸`);
+            reduced = true;
+        }
+        if (fxResult.pushBack) {
+            fxResult.pushBack = Math.max(1, Math.floor(fxResult.pushBack / 2));
+            this.addLog('event', `🛡️ 감소! 밀림 → ${fxResult.pushBack}칸`);
+            reduced = true;
+        }
+        if (fxResult.extraSlide) {
+            fxResult.extraSlide = Math.max(1, Math.floor(fxResult.extraSlide / 2));
+            this.addLog('event', `🛡️ 감소! 미끄러짐 → +${fxResult.extraSlide}칸`);
+            reduced = true;
+        }
+        
+        // 감소할 수 없으면 카드 사용 취소
+        if (!reduced) {
+            this.addLog('system', '⚠️ 이 이벤트는 감소할 수 없습니다 (칸 이동만 가능)');
+            return false;
+        }
+        
+        // 이벤트 팝업 닫고 결과 적용
         this.elements.eventArea.classList.add('hidden');
+        this.elements.eventArea.classList.remove('event-active');
+        this.highlightHand(false);
         
-        // 이벤트 다시 적용
-        setTimeout(() => {
-            this.executeEvent(this.pendingEvent, this.lastDiceValue);
-            this.effectReducer = null;
-        }, 300);
+        // 수정된 결과 적용
+        this.pendingEvent = null;
+        this.applyResult(fxResult, this.lastDiceValue);
+        
+        return true;
     }
     
     // 주사위 다시 굴리기
