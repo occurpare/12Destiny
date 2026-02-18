@@ -144,6 +144,12 @@ class Game {
     
     // 카드 사용
     useCard(cardUid) {
+        // 한 턴에 한 장만 사용 가능
+        if (this.cardUsedThisTurn) {
+            this.addLog('system', '⚠️ 이번 턴에는 이미 카드를 사용했습니다!');
+            return false;
+        }
+        
         const cardIndex = this.hand.findIndex(c => c.uid === cardUid);
         if (cardIndex === -1) return false;
         
