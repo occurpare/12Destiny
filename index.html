@@ -18,6 +18,9 @@
             <a href="pages/guide.html" class="nav-link">📖 가이드</a>
             <a href="pages/faq.html" class="nav-link">❓ FAQ</a>
         </div>
+        <div class="nav-settings">
+            <button class="lang-toggle" id="langToggle" title="언어 전환">🇰🇷 한</button>
+        </div>
     </nav>
     
     <!-- 시작 화면 모달 -->
@@ -198,9 +201,163 @@
         </div>
     </footer>
 
+    <!-- 언어 파일 로드 -->
+    <script src="lang/ko.js"></script>
+    <script src="lang/en.js"></script>
     <script src="game.js"></script>
     <script>
-        // 인트로 모달 관리
+        // ==================== 언어 설정 ====================
+        let currentLang = localStorage.getItem('lang') || 'ko';
+        const langToggle = document.getElementById('langToggle');
+        
+        // 언어 변경 함수
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            const LANG = lang === 'ko' ? LANG_KO : LANG_EN;
+            
+            // 언어 토글 버튼 업데이트
+            langToggle.textContent = lang === 'ko' ? '🇰🇷 한' : '🇺🇸 EN';
+            langToggle.title = lang === 'ko' ? 'Switch to English' : '한국어로 전환';
+            
+            // HTML lang 속성
+            document.documentElement.lang = lang;
+            
+            // 네비게이션
+            const navLinks = document.querySelectorAll('.nav-link');
+            if (navLinks[0]) navLinks[0].textContent = LANG.nav.game;
+            if (navLinks[1]) navLinks[1].textContent = LANG.nav.guide;
+            if (navLinks[2]) navLinks[2].textContent = LANG.nav.faq;
+            
+            // 인트로 모달
+            const introTitle = document.querySelector('.intro-header h1');
+            const introVersion = document.querySelector('.intro-version');
+            const introRulesTitle = document.querySelector('.intro-rules h2');
+            const introCatsTitle = document.querySelector('.intro-cats h2');
+            const introTipsTitle = document.querySelector('.intro-tips h2');
+            const startBtn = document.getElementById('startGameBtn');
+            const skipLabel = document.querySelector('.intro-checkbox span');
+            
+            if (introVersion) introVersion.textContent = LANG.version;
+            if (introRulesTitle) introRulesTitle.textContent = LANG.rulesTitle;
+            if (introCatsTitle) introCatsTitle.textContent = LANG.categoriesTitle;
+            if (introTipsTitle) introTipsTitle.textContent = LANG.tipsTitle;
+            if (startBtn) startBtn.textContent = LANG.buttons.startGame;
+            if (skipLabel) skipLabel.textContent = LANG.buttons.dontShowAgain;
+            
+            // 인트로 규칙 텍스트
+            const rulesList = document.querySelector('.intro-rules ul');
+            if (rulesList) {
+                rulesList.innerHTML = `
+                    <li><strong>${LANG.rules.goal}</strong> ${LANG.rules.goalText} <span class="highlight-goal">${LANG.rules.goalHighlight}</span> ${LANG.rules.goalReach}</li>
+                    <li><strong>${LANG.rules.dice}</strong> ${LANG.rules.diceText}</li>
+                    <li><strong>${LANG.rules.events}</strong> ${LANG.rules.eventsText}</li>
+                    <li><strong>${LANG.rules.bypass}</strong> ${LANG.rules.bypassText}</li>
+                `;
+            }
+            
+            // 카테고리 텍스트
+            const catItems = document.querySelectorAll('.cat-item');
+            const cats = ['positive', 'neutral', 'negative', 'despair', 'special', 'blocker'];
+            catItems.forEach((item, i) => {
+                const nameEl = item.querySelector('.cat-name');
+                const countEl = item.querySelector('.cat-count');
+                if (nameEl && LANG.categories[cats[i]]) {
+                    nameEl.textContent = LANG.categories[cats[i]].name;
+                }
+                if (countEl && LANG.categories[cats[i]]) {
+                    countEl.textContent = LANG.categories[cats[i]].count;
+                }
+            });
+            
+            // 팁 텍스트
+            const tipsList = document.querySelector('.intro-tips ul');
+            if (tipsList && LANG.tips) {
+                tipsList.innerHTML = LANG.tips.map(tip => `<li>${tip}</li>`).join('');
+            }
+            
+            // 버튼 텍스트
+            const rollBtn = document.getElementById('rollButton');
+            const historyBtnEl = document.getElementById('historyBtn');
+            const restartBtn = document.getElementById('restartButton');
+            const resultBtn = document.getElementById('resultButton');
+            
+            if (rollBtn) rollBtn.textContent = LANG.buttons.rollDice;
+            if (restartBtn) restartBtn.textContent = LANG.buttons.restart;
+            if (resultBtn) resultBtn.textContent = LANG.buttons.challengeAgain;
+            if (historyBtnEl) {
+                // 기록 버튼은 이모지 유지
+                historyBtnEl.textContent = '📜 ' + (lang === 'ko' ? '기록' : 'History');
+            }
+            
+            // 결과 화면 텍스트 (게임 중에 동적으로 변경됨)
+            if (window.game && window.game.gameOver) {
+                updateResultTexts();
+            }
+            
+            // 이벤트 기록 패널
+            const historyTitle = document.querySelector('.history-header h3');
+            if (historyTitle) historyTitle.textContent = LANG.history.title;
+            
+            // 푸터
+            const footerDev = document.querySelector('.footer-developer');
+            if (footerDev) {
+                const devLink = footerDev.querySelector('a');
+                footerDev.innerHTML = LANG.footer.developer + ': ';
+                const newLink = document.createElement('a');
+                newLink.href = 'mailto:occurpare@naver.com';
+                newLink.textContent = 'occurpare@naver.com';
+                footerDev.appendChild(newLink);
+            }
+            
+            // 푸터 링크
+            const footerLinks = document.querySelectorAll('.footer-links a');
+            if (footerLinks[0]) footerLinks[0].textContent = LANG.footer.legal.privacy;
+            if (footerLinks[1]) footerLinks[1].textContent = LANG.footer.legal.terms;
+            if (footerLinks[2]) footerLinks[2].textContent = LANG.footer.legal.cookies;
+        }
+        
+        // 결과 화면 텍스트 업데이트
+        function updateResultTexts() {
+            const LANG = currentLang === 'ko' ? LANG_KO : LANG_EN;
+            const resultDetail = document.getElementById('resultDetail');
+            const statsEl = document.getElementById('resultStats');
+            
+            if (!window.game) return;
+            
+            // 결과 상세 텍스트
+            if (window.game.gameOver) {
+                if (resultDetail) {
+                    if (window.game.position >= window.game.goalPosition) {
+                        resultDetail.textContent = currentLang === 'ko' 
+                            ? `${window.game.turn}턴 만에 클리어!` 
+                            : `Cleared in ${window.game.turn} turns!`;
+                    } else {
+                        resultDetail.textContent = currentLang === 'ko'
+                            ? `${window.game.maxTurns}턴 내 도달 실패`
+                            : `Failed to reach goal in ${window.game.maxTurns} turns`;
+                    }
+                }
+                
+                // 통계 텍스트
+                if (statsEl) {
+                    const stats = LANG.result.stats;
+                    statsEl.innerHTML = `
+                        <div class="stat-row"><span class="stat-label">${stats.totalRolls}</span><span class="stat-value">${window.game.totalRolls}${currentLang === 'ko' ? '회' : ' times'}</span></div>
+                        <div class="stat-row"><span class="stat-label">${stats.events}</span><span class="stat-value">${window.game.eventHistory.length}${currentLang === 'ko' ? '회' : ' times'}</span></div>
+                        <div class="stat-row"><span class="stat-label">${stats.finalPosition}</span><span class="stat-value">${window.game.position}${currentLang === 'ko' ? '칸' : ''}</span></div>
+                    `;
+                }
+            }
+        }
+        
+        // 언어 토글 이벤트
+        langToggle.addEventListener('click', () => {
+            const newLang = currentLang === 'ko' ? 'en' : 'ko';
+            setLanguage(newLang);
+        });
+        
+        // ==================== 인트로 모달 관리 ====================
         const introModal = document.getElementById('introModal');
         const startGameBtn = document.getElementById('startGameBtn');
         const skipIntroCheckbox = document.getElementById('skipIntroCheckbox');
@@ -213,6 +370,9 @@
         if (localStorage.getItem('skipIntro') === 'true') {
             introModal.classList.add('hidden');
         }
+        
+        // 초기 언어 설정
+        setLanguage(currentLang);
         
         // 게임 시작
         startGameBtn.addEventListener('click', () => {
@@ -259,12 +419,14 @@
         // 이벤트 기록 패널 업데이트
         function updateHistoryPanel() {
             const historyList = document.getElementById('historyList');
+            const LANG = currentLang === 'ko' ? LANG_KO : LANG_EN;
+            
             if (!window.game || !window.game.eventHistory) {
-                historyList.innerHTML = '<div class="history-empty">아직 이벤트가 없습니다</div>';
+                historyList.innerHTML = `<div class="history-empty">${LANG.history.empty}</div>`;
                 return;
             }
             
-            const categories = {
+            const categories = currentLang === 'ko' ? {
                 'p': { name: '긍정적', class: 'positive', icon: '✅' },
                 'n': { name: '중립적', class: 'neutral', icon: '⚖️' },
                 'e': { name: '부정적', class: 'negative', icon: '❌' },
@@ -275,13 +437,24 @@
                 'c': { name: '저주', class: 'curse', icon: '🔮' },
                 'b': { name: '방해', class: 'blocker', icon: '🛑' },
                 'bp': { name: '우회', class: 'bypass', icon: '🔄' }
+            } : {
+                'p': { name: 'Positive', class: 'positive', icon: '✅' },
+                'n': { name: 'Neutral', class: 'neutral', icon: '⚖️' },
+                'e': { name: 'Negative', class: 'negative', icon: '❌' },
+                'd': { name: 'Despair', class: 'despair', icon: '😱' },
+                's': { name: 'Special', class: 'special', icon: '⭐' },
+                'r': { name: 'Early', class: 'early', icon: '🚧' },
+                't': { name: 'Turn', class: 'turnPressure', icon: '⏰' },
+                'c': { name: 'Curse', class: 'curse', icon: '🔮' },
+                'b': { name: 'Blocker', class: 'blocker', icon: '🛑' },
+                'bp': { name: 'Bypass', class: 'bypass', icon: '🔄' }
             };
             
             let html = '';
             const history = window.game.eventHistory;
             
             if (history.length === 0) {
-                html = '<div class="history-empty">아직 이벤트가 없습니다</div>';
+                html = `<div class="history-empty">${LANG.history.empty}</div>`;
             } else {
                 const eventLib = window.game.getEventLibrary();
                 const allEvents = [
@@ -295,11 +468,12 @@
                     const event = allEvents.find(e => e.id === id);
                     const prefix = id.startsWith('bp') ? 'bp' : id.charAt(0);
                     const cat = categories[prefix] || categories['n'];
+                    const turnText = currentLang === 'ko' ? `턴 ${index + 1}` : `Turn ${index + 1}`;
                     
                     html += '<div class="history-item ' + cat.class + '">' +
                         '<span class="history-icon">' + (event ? event.icon : '❓') + '</span>' +
                         '<span class="history-name">' + (event ? event.name : id) + '</span>' +
-                        '<span class="history-turn">턴 ' + (index + 1) + '</span>' +
+                        '<span class="history-turn">' + turnText + '</span>' +
                         '</div>';
                 });
             }

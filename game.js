@@ -1805,44 +1805,76 @@ class Game {
         this.gameOver = true;
         this.updateBoard();
         this.updateStatus();
-        this.addLog('system', `🎉 승리! ${this.turn}턴 만에 클리어! "축하해... 이거 쉬운 거야."`);
-        this.elements.resultIcon.textContent = '🎉';
-        this.elements.resultText.textContent = '승리!';
-        this.elements.resultText.className = 'result-text victory';
-        this.elements.resultDetail.textContent = `${this.turn}턴 만에 클리어!`;
         
-        // 통계 표시
+        // 언어 팩 사용
+        const LANG = (typeof currentLang !== 'undefined' && currentLang === 'en') ? (typeof LANG_EN !== 'undefined' ? LANG_EN : null) : (typeof LANG_KO !== 'undefined' ? LANG_KO : null);
+        const isKorean = !LANG || currentLang === 'ko';
+        
+        const victoryMsg = isKorean 
+            ? '"축하해... 이거 쉬운 거야." 😈' 
+            : '"Congrats... that was easy." 😈';
+        this.addLog('system', `🎉 ${LANG ? LANG.result.victory : '승리!'} ${this.turn}${isKorean ? '턴 만에 클리어!' : ' turns to clear!'} ${victoryMsg}`);
+        
+        this.elements.resultIcon.textContent = '🎉';
+        this.elements.resultText.textContent = LANG ? LANG.result.victory : '🎉 승리!';
+        this.elements.resultText.className = 'result-text victory';
+        this.elements.resultDetail.textContent = isKorean 
+            ? `${this.turn}턴 만에 클리어!` 
+            : `Cleared in ${this.turn} turns!`;
+        
+        // 통계 표시 (라벨과 값 분리)
+        const stats = LANG ? LANG.result.stats : null;
         const statsHtml = `
-            <div><span>총 주사위 굴림</span><span>${this.totalRolls}회</span></div>
-            <div><span>발생한 이벤트</span><span>${this.eventHistory.length}회</span></div>
-            <div><span>최종 위치</span><span>${this.position}칸</span></div>
-            <div><span>최종 주사위</span><span>${this.currentDice.name}</span></div>
+            <div class="stat-row"><span class="stat-label">${stats ? stats.totalRolls : '총 주사위 굴림'}</span><span class="stat-value">${this.totalRolls}${isKorean ? '회' : ' times'}</span></div>
+            <div class="stat-row"><span class="stat-label">${stats ? stats.events : '발생한 이벤트'}</span><span class="stat-value">${this.eventHistory.length}${isKorean ? '회' : ' times'}</span></div>
+            <div class="stat-row"><span class="stat-label">${stats ? stats.finalPosition : '최종 위치'}</span><span class="stat-value">${this.position}${isKorean ? '칸' : ''}</span></div>
+            <div class="stat-row"><span class="stat-label">${isKorean ? '최종 주사위' : 'Final Dice'}</span><span class="stat-value">${this.currentDice.name}</span></div>
         `;
         const statsEl = document.getElementById('resultStats');
         if (statsEl) statsEl.innerHTML = statsHtml;
         
         this.elements.resultScreen.classList.remove('hidden');
+        // 애니메이션 트리거 (약간의 지연 추가)
+        setTimeout(() => {
+            this.elements.resultScreen.classList.add('result-show');
+        }, 10);
     }
     
     defeat() {
         this.gameOver = true;
-        this.addLog('system', `💀 패배... "힘내... 다음엔 운이 좋을지도."`);
-        this.elements.resultIcon.textContent = '💀';
-        this.elements.resultText.textContent = '패배';
-        this.elements.resultText.className = 'result-text defeat';
-        this.elements.resultDetail.textContent = `${this.maxTurns}턴 내 도달 실패`;
         
-        // 통계 표시
+        // 언어 팩 사용
+        const LANG = (typeof currentLang !== 'undefined' && currentLang === 'en') ? (typeof LANG_EN !== 'undefined' ? LANG_EN : null) : (typeof LANG_KO !== 'undefined' ? LANG_KO : null);
+        const isKorean = !LANG || currentLang === 'ko';
+        
+        const defeatMsg = isKorean 
+            ? '"힘내... 다음엔 운이 좋을지도."' 
+            : '"Hang in there... maybe next time."';
+        this.addLog('system', `💀 ${LANG ? LANG.result.defeat : '패배...'} ${defeatMsg}`);
+        
+        this.elements.resultIcon.textContent = '😢';
+        this.elements.resultText.textContent = LANG ? LANG.result.defeat : '패배';
+        this.elements.resultText.className = 'result-text defeat';
+        this.elements.resultDetail.textContent = isKorean 
+            ? `${this.maxTurns}턴 내 도달 실패` 
+            : `Failed to reach goal in ${this.maxTurns} turns`;
+        
+        // 통계 표시 (라벨과 값 분리)
+        const stats = LANG ? LANG.result.stats : null;
         const statsHtml = `
-            <div><span>총 주사위 굴림</span><span>${this.totalRolls}회</span></div>
-            <div><span>발생한 이벤트</span><span>${this.eventHistory.length}회</span></div>
-            <div><span>최종 위치</span><span>${this.position}칸</span></div>
-            <div><span>남은 거리</span><span>${this.goalPosition - this.position}칸</span></div>
+            <div class="stat-row"><span class="stat-label">${stats ? stats.totalRolls : '총 주사위 굴림'}</span><span class="stat-value">${this.totalRolls}${isKorean ? '회' : ' times'}</span></div>
+            <div class="stat-row"><span class="stat-label">${stats ? stats.events : '발생한 이벤트'}</span><span class="stat-value">${this.eventHistory.length}${isKorean ? '회' : ' times'}</span></div>
+            <div class="stat-row"><span class="stat-label">${stats ? stats.finalPosition : '최종 위치'}</span><span class="stat-value">${this.position}${isKorean ? '칸' : ''}</span></div>
+            <div class="stat-row"><span class="stat-label">${isKorean ? '남은 거리' : 'Distance Left'}</span><span class="stat-value">${this.goalPosition - this.position}${isKorean ? '칸' : ''}</span></div>
         `;
         const statsEl = document.getElementById('resultStats');
         if (statsEl) statsEl.innerHTML = statsHtml;
         
         this.elements.resultScreen.classList.remove('hidden');
+        // 애니메이션 트리거 (약간의 지연 추가)
+        setTimeout(() => {
+            this.elements.resultScreen.classList.add('result-show');
+        }, 10);
     }
     
     restart() {
