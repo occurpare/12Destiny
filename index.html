@@ -121,6 +121,10 @@
                             <span class="progress-text" id="progressText">0%</span>
                         </div>
                     </div>
+                    <div class="status-extra">
+                        <span id="distanceLeft">12칸</span>
+                        <span id="eventCount">0회</span>
+                    </div>
                 </div>
                 <div class="board" id="board"></div>
                 <!-- 지속 효과 표시 -->
@@ -397,23 +401,28 @@
             historyPanel.classList.add('hidden');
         });
         
-        // 진행률 업데이트
+        // 진행률 업데이트 (game.js에서 호출됨)
         function updateProgress() {
             if (!window.game) return;
             const position = window.game.position || 0;
             const goal = window.game.goalPosition || 12;
             const progress = Math.min(100, Math.round((position / goal) * 100));
             
-            document.getElementById('progressFill').style.width = progress + '%';
-            document.getElementById('progressText').textContent = progress + '%';
-            document.getElementById('distanceLeft').textContent = Math.max(0, goal - position) + '칸';
-            document.getElementById('eventCount').textContent = (window.game.eventHistory ? window.game.eventHistory.length : 0) + '회';
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const distanceLeft = document.getElementById('distanceLeft');
+            const eventCount = document.getElementById('eventCount');
             
-            let chance = 92;
-            if (position >= 10) chance = 99.5;
-            else if (position >= 7) chance = 99;
-            else if (position >= 4) chance = 96;
-            document.getElementById('eventChance').textContent = chance + '%';
+            if (progressFill) progressFill.style.width = progress + '%';
+            if (progressText) progressText.textContent = progress + '%';
+            if (distanceLeft) {
+                const isKorean = (typeof currentLang === 'undefined' || currentLang === 'ko');
+                distanceLeft.textContent = Math.max(0, goal - position) + (isKorean ? '칸' : '');
+            }
+            if (eventCount) {
+                const isKorean = (typeof currentLang === 'undefined' || currentLang === 'ko');
+                eventCount.textContent = (window.game.eventHistory ? window.game.eventHistory.length : 0) + (isKorean ? '회' : '');
+            }
         }
         
         // 이벤트 기록 패널 업데이트

@@ -1911,59 +1911,156 @@ class Game {
     updateBoard() {
         this.elements.board.innerHTML = '';
         
-        // 메인 루트 (1~12칸)
-        const mainTrack = document.createElement('div');
-        mainTrack.className = 'track main-track';
+        const isKorean = (typeof currentLang === 'undefined' || currentLang === 'ko');
         
-        for (let i = 1; i <= 12; i++) {
-            const cell = document.createElement('div');
-            cell.className = 'cell';
-            cell.textContent = i;
-            if (i === 12) cell.classList.add('goal');
-            else if (i <= 6) cell.classList.add('safe');
-            else cell.classList.add('danger');
-            if (i === this.position && !this.isInBypass) {
-                cell.classList.add('current');
-                cell.innerHTML = `<span class="player-marker">👤</span>${i}`;
-            }
-            if (i < this.position && !this.isInBypass) cell.classList.add('passed');
-            mainTrack.appendChild(cell);
-        }
-        this.elements.board.appendChild(mainTrack);
+        // ========== 현재 위치 표시 ==========
+        const positionDisplay = document.createElement('div');
+        positionDisplay.className = 'board-position-display';
         
-        // 우회 루트 (동적 3~6칸)
-        if (this.isInBypass && this.bypassLength > 0) {
-            const bypassTrack = document.createElement('div');
-            bypassTrack.className = 'track bypass-track';
-            
-            const arrow = document.createElement('div');
-            arrow.className = 'bypass-arrow';
-            arrow.textContent = `↪️ 우회 루트 (${this.bypassLength}칸)`;
-            bypassTrack.appendChild(arrow);
-            
-            for (let i = 13; i <= 12 + this.bypassLength; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'cell bypass';
-                cell.textContent = i;
-                if (i === this.position) {
-                    cell.classList.add('current');
-                    cell.innerHTML = `<span class="player-marker">👤</span>${i}`;
-                }
-                bypassTrack.appendChild(cell);
+        const currentPosition = this.isInBypass ? this.position : this.position;
+        const goalPosition = this.goalPosition;
+        const isGoal = currentPosition >= goalPosition && !this.isInBypass;
+        
+        positionDisplay.innerHTML = `
+            <span class="position-label">${isKorean ? '현재 위치' : 'Position'}</span>
+            <span class="position-number ${isGoal ? 'goal' : ''}">${currentPosition}</span>
+            <span class="position-suffix">${isKorean ? '칸' : ''}</span>
+            ${this.isInBypass ? `<div class="position-info">↪️ ${isKorean ? '우회 루트' : 'Bypass'}</div>` : ''}
+        `;
+        this.elements.board.appendChild(positionDisplay);
+        
+        // ========== 폰 영역 (중앙 고정) ==========
+        const playerArea = document.createElement('div');
+        playerArea.className = 'board-player-area';
+        playerArea.innerHTML = '<div class="player-character">👤</div>';
+        this.elements.board.appendChild(playerArea);
+        
+        // ========== 슬라이드 트랙 ==========
+        const trackWrapper = document.createElement('div');
+        trackWrapper.className = 'board-track-wrapper';
+        
+        const trackContainer = document.createElement('div');
+        trackContainer.className = 'board-track-container';
+        
+        const track = document.createElement('div');
+        track.className = 'board-track';
+        
+        // 표시할 칸 계산 (현재 위치 기준 좌우 2칸씩 = 최대 5칸)
+        const visibleRange = 2; // 좌우로 볼 칸 수
+        let cells = [];
+        
+        if (this.isInBypass) {
+            // 우회 루트: 13칸부터 현재 위치까지
+            const bypassEnd = 12 + this.bypassLength;
+            for (let i = 13; i <= bypassEnd; i++) {
+                cells.push({ num: i, type: 'bypass' });
             }
-            
-            const loopArrow = document.createElement('div');
-            loopArrow.className = 'loop-arrow';
-            loopArrow.textContent = '🔄→12';
-            bypassTrack.appendChild(loopArrow);
-            
-            this.elements.board.appendChild(bypassTrack);
         } else {
-            // 우회 루트 미진입 시 안내 표시
-            const hint = document.createElement('div');
-            hint.className = 'bypass-hint';
-            hint.textContent = '💡 12칸 초과 시 3~6칸 우회 루트 생성';
-            this.elements.board.appendChild(hint);
+            // 메인 루트: 0~12칸
+            for (let i = 0; i <= 12; i++) {
+                let type = '';
+                if (i === 0) type = 'start';
+                else if (i === this.goalPosition) type = 'goal';
+                else if (i <= 6) type = 'safe';
+                else type = 'danger';
+                cells.push({ num: i, type: type });
+            }
+        }
+        
+        // 현재 위치의 인덱스 찾기
+        const currentIndex = cells.findIndex(c => c.num === this.position);
+        
+        // 표시할 칸 범위 계산
+        const startIndex = Math.max(0, currentIndex - visibleRange);
+        const endIndex = Math.min(cells.length - 1, currentIndex + visibleRange);
+        
+        // 칸 생성
+        for (let i = startIndex; i <= endIndex; i++) {
+            const cellData = cells[i];
+            const cell = document.createElement('div');
+            cell.className = 'track-cell';
+            cell.textContent = cellData.num;
+            
+            // 타입 클래스 추가
+            if (cellData.type) {
+                cell.classList.add(cellData.type);
+            }
+            
+            // 현재 위치 강조
+            if (cellData.num === this.position) {
+                cell.classList.add('current');
+            }
+            
+            // 블러 처리 (중심에서 멀수록)
+            const distance = Math.abs(i - currentIndex);
+            if (distance >= visibleRange) {
+                cell.classList.add('blurred');
+            }
+            
+            track.appendChild(cell);
+        }
+        
+        trackContainer.appendChild(track);
+        trackWrapper.appendChild(trackContainer);
+        this.elements.board.appendChild(trackWrapper);
+        
+        // ========== 양 끝 화살표 힌트 ==========
+        const hints = document.createElement('div');
+        hints.className = 'board-hints';
+        
+        const leftHint = document.createElement('div');
+        leftHint.className = `hint-left ${this.position > 0 ? 'visible' : ''}`;
+        leftHint.textContent = '◀';
+        
+        const rightHint = document.createElement('div');
+        const maxPos = this.isInBypass ? (12 + this.bypassLength) : this.goalPosition;
+        rightHint.className = `hint-right ${this.position < maxPos ? 'visible' : ''}`;
+        rightHint.textContent = '▶';
+        
+        hints.appendChild(leftHint);
+        hints.appendChild(rightHint);
+        this.elements.board.appendChild(hints);
+        
+        // ========== 우회 루트 안내 ==========
+        if (this.isInBypass) {
+            const bypassInfo = document.createElement('div');
+            bypassInfo.className = 'bypass-info';
+            bypassInfo.innerHTML = `
+                <span class="bypass-info-arrow">🔄</span>
+                <span>${isKorean ? `우회 루트 ${this.bypassLength}칸 (12칸 순환)` : `Bypass ${this.bypassLength} spaces (loops to 12)`}</span>
+            `;
+            this.elements.board.appendChild(bypassInfo);
+        }
+        
+        // 진행률 업데이트
+        this.updateProgress();
+    }
+    
+    // 진행률 업데이트
+    updateProgress() {
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const distanceLeft = document.getElementById('distanceLeft');
+        const eventCount = document.getElementById('eventCount');
+        
+        if (!progressFill) return;
+        
+        const position = this.position;
+        const goal = this.goalPosition;
+        const progress = Math.min(100, Math.round((position / goal) * 100));
+        
+        progressFill.style.width = progress + '%';
+        if (progressText) progressText.textContent = progress + '%';
+        
+        if (distanceLeft) {
+            const distance = Math.max(0, goal - position);
+            const isKorean = (typeof currentLang === 'undefined' || currentLang === 'ko');
+            distanceLeft.textContent = distance + (isKorean ? '칸' : '');
+        }
+        
+        if (eventCount) {
+            const isKorean = (typeof currentLang === 'undefined' || currentLang === 'ko');
+            eventCount.textContent = (this.eventHistory ? this.eventHistory.length : 0) + (isKorean ? '회' : '');
         }
     }
     

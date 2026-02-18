@@ -217,12 +217,27 @@ body {
     background: #f5f2ed;
     border-radius: 12px;
     border: 1px solid #e8e4dd;
+    flex-wrap: wrap;
 }
 
 .turn-counter, .position {
     font-size: 0.95rem;
     font-weight: 500;
     color: #2d2d2d;
+}
+
+.status-extra {
+    display: flex;
+    gap: 12px;
+    font-size: 0.85rem;
+    color: #6b6b6b;
+}
+
+#distanceLeft, #eventCount {
+    background: #ffffff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid #e8e4dd;
 }
 
 .progress-container {
@@ -250,89 +265,307 @@ body {
 }
 
 /* ============================================ */
-/* Board */
+/* Board - New Slide Design */
 /* ============================================ */
 
 .board {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     margin: 20px 0;
-    padding: 20px;
-    background: #f5f2ed;
-    border-radius: 12px;
+    padding: 24px 20px;
+    background: linear-gradient(180deg, #faf8f5 0%, #f5f2ed 100%);
+    border-radius: 16px;
     border: 1px solid #e8e4dd;
+    min-height: 200px;
+    position: relative;
+    overflow: hidden;
 }
 
-.track {
+/* 현재 위치 표시 */
+.board-position-display {
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    align-items: center;
     justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
 }
 
-.cell {
-    width: 52px;
-    height: 52px;
+.position-label {
+    font-size: 0.9rem;
+    color: #9a9a9a;
+    font-weight: 500;
+}
+
+.position-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #2d2d2d;
+    min-width: 60px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.position-number.goal {
+    color: #c9a86c;
+    animation: goalPulse 1s ease-in-out infinite;
+}
+
+@keyframes goalPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.position-suffix {
+    font-size: 0.9rem;
+    color: #9a9a9a;
+}
+
+.position-info {
+    font-size: 0.75rem;
+    color: #c9a86c;
+    margin-top: 4px;
+}
+
+/* 폰 영역 (중앙 고정) */
+.board-player-area {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 8px 0 20px 0;
+    z-index: 10;
+}
+
+.player-character {
+    font-size: 3.5rem;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+    animation: playerBounce 2s ease-in-out infinite;
+}
+
+@keyframes playerBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* 슬라이드 트랙 */
+.board-track-wrapper {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    padding: 0 20px;
+}
+
+.board-track-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.board-track {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+}
+
+/* 개별 칸 */
+.track-cell {
+    width: 56px;
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #ffffff;
-    border: 2px solid #e8e4dd;
-    border-radius: 10px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #6b6b6b;
+    border: 3px solid #2d2d2d;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2d2d2d;
+    flex-shrink: 0;
     transition: all 0.3s ease;
     position: relative;
+    box-shadow: 2px 2px 0 #2d2d2d;
 }
 
-.cell.current {
+/* 러프한 테두리 효과 */
+.track-cell::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border: 3px solid #2d2d2d;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.track-cell:hover::before {
+    opacity: 0.5;
+    transform: translate(-1px, -1px);
+}
+
+/* 블러 처리된 칸 */
+.track-cell.blurred {
+    opacity: 0.4;
+    filter: blur(2px);
+    transform: scale(0.9);
+}
+
+/* 현재 칸 (강조) */
+.track-cell.current {
+    opacity: 1;
+    filter: none;
+    transform: scale(1);
     background: #c9a86c;
     color: white;
     border-color: #a08650;
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(201, 168, 108, 0.3);
+    box-shadow: 4px 4px 0 #a08650, 0 0 20px rgba(201, 168, 108, 0.3);
+    z-index: 5;
 }
 
-.cell.goal {
+/* 골 칸 */
+.track-cell.goal {
     background: linear-gradient(135deg, #c9a86c 0%, #a08650 100%);
-    color: white;
-    border-color: #a08650;
-    font-weight: 700;
+    border-color: #8b7340;
+    box-shadow: 3px 3px 0 #8b7340;
 }
 
-.cell.safe {
+.track-cell.goal.current {
+    box-shadow: 4px 4px 0 #8b7340, 0 0 25px rgba(201, 168, 108, 0.5);
+    animation: goalCellGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes goalCellGlow {
+    0%, 100% { box-shadow: 4px 4px 0 #8b7340, 0 0 25px rgba(201, 168, 108, 0.5); }
+    50% { box-shadow: 4px 4px 0 #8b7340, 0 0 40px rgba(201, 168, 108, 0.8); }
+}
+
+/* 안전 구역 (1~6칸) */
+.track-cell.safe {
     border-color: #5a9a6e;
+    box-shadow: 2px 2px 0 #5a9a6e;
 }
 
-.cell.danger {
+.track-cell.safe.current {
+    background: #5a9a6e;
+    border-color: #4a8a5e;
+    box-shadow: 4px 4px 0 #4a8a5e;
+}
+
+/* 위험 구역 (7~11칸) */
+.track-cell.danger {
     border-color: #c75a5a;
+    box-shadow: 2px 2px 0 #c75a5a;
 }
 
-.cell.passed {
-    background: #f5f2ed;
+.track-cell.danger.current {
+    background: #c75a5a;
+    border-color: #b74a4a;
+    box-shadow: 4px 4px 0 #b74a4a;
+}
+
+/* 우회 루트 칸 */
+.track-cell.bypass {
+    border-color: #8b5cf6;
+    box-shadow: 2px 2px 0 #8b5cf6;
+    background: linear-gradient(135deg, #f5f0ff 0%, #ede7ff 100%);
+}
+
+.track-cell.bypass.current {
+    background: #8b5cf6;
+    border-color: #7b4ce6;
+    box-shadow: 4px 4px 0 #7b4ce6;
+    color: white;
+}
+
+/* 시작점 (0칸) */
+.track-cell.start {
+    border-color: #6b6b6b;
+    box-shadow: 2px 2px 0 #6b6b6b;
+}
+
+.track-cell.start.current {
+    background: #6b6b6b;
+    border-color: #5b5b5b;
+    box-shadow: 4px 4px 0 #5b5b5b;
+    color: white;
+}
+
+/* 이동 화살표 힌트 */
+.board-hints {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 10px;
+    margin-top: 12px;
+    opacity: 0.5;
+    font-size: 1.2rem;
     color: #9a9a9a;
+}
+
+.hint-left, .hint-right {
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.hint-left.visible, .hint-right.visible {
+    opacity: 1;
+    color: #c9a86c;
+}
+
+.hint-left.visible:hover {
+    transform: translateX(-3px);
+}
+
+.hint-right.visible:hover {
+    transform: translateX(3px);
+}
+
+/* 우회 루트 안내 */
+.bypass-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #8b5cf6;
+    font-weight: 500;
+}
+
+.bypass-info-arrow {
+    font-size: 1rem;
+}
+
+/* 이전 스타일 호환성 (레거시) */
+.track {
+    display: none; /* 사용하지 않음 */
+}
+
+.cell {
+    /* 레거시 - 새 스타일 사용 */
 }
 
 .player-marker {
     font-size: 1.1rem;
 }
 
-/* Bypass Track */
+/* 우회 루트 트랙 (레거시) */
 .bypass-track {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 2px dashed #c9a86c;
+    display: none;
 }
 
 .bypass-arrow {
-    text-align: center;
-    color: #c9a86c;
-    font-size: 0.85rem;
-    margin-bottom: 8px;
-    font-weight: 600;
+    display: none;
+}
+
+.bypass-hint {
+    display: none;
 }
 
 /* ============================================ */
