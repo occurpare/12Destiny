@@ -1434,6 +1434,20 @@ class Game {
         
         console.log('전체 이벤트 수:', all.length);
         
+        // ===== 행운 효과 체크 (긍정 이벤트 100%) =====
+        const hasLucky = this.activeEffects.some(e => e.id === 'lucky');
+        if (hasLucky) {
+            console.log('🍀 행운 효과 활성화 - 긍정 이벤트 강제!');
+            const positiveEvents = lib.positive.filter(e => {
+                const recentIds = this.eventHistory.slice(-5);
+                if (recentIds.includes(e.id)) return false;
+                try { return e.cond(this.position, diceValue, this.turn); } catch { return false; }
+            });
+            if (positiveEvents.length > 0) {
+                return positiveEvents[this.r(0, positiveEvents.length - 1)];
+            }
+        }
+        
         // 최근 5개 이벤트는 제외 (다양성 강화)
         const recentIds = this.eventHistory.slice(-5);
         const matching = all.filter(e => {
