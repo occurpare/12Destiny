@@ -1477,9 +1477,50 @@ class Game {
     
     // ==================== 이동 ====================
     
+    // 슬라이딩 애니메이션 실행
+    animateBoardSlide(fromPos, toPos, isEventMove = false) {
+        return new Promise(resolve => {
+            const track = document.querySelector('.board-track');
+            const player = document.querySelector('.player-character');
+            const positionNumber = document.querySelector('.position-number');
+            
+            if (!track) {
+                resolve();
+                return;
+            }
+            
+            const diff = toPos - fromPos;
+            const direction = diff > 0 ? 'left' : 'right';
+            
+            // 이벤트 후 이동은 더 역동적인 애니메이션
+            if (isEventMove) {
+                track.style.setProperty('--slide-offset', `${diff * -64}px`);
+                track.classList.add('event-move');
+                if (player) player.classList.add('event-moving');
+            } else {
+                track.classList.add(`sliding-${direction}`);
+                if (player) player.classList.add('moving');
+            }
+            
+            // 위치 숫자 변경 애니메이션
+            if (positionNumber) {
+                positionNumber.classList.add('changing');
+            }
+            
+            // 애니메이션 완료 후 정리
+            setTimeout(() => {
+                track.classList.remove('sliding-left', 'sliding-right', 'event-move');
+                if (player) player.classList.remove('moving', 'event-moving');
+                if (positionNumber) positionNumber.classList.remove('changing');
+                resolve();
+            }, isEventMove ? 600 : 500);
+        });
+    }
+    
     movePlayer(spaces, isEventRecoil = false) {
         // 이벤트 후퇴로 12칸 이하가 되면 우회로 생성 X
         if (isEventRecoil) {
+            const fromPos = this.position;
             this.position = Math.max(0, this.position + spaces);
             
             // 12칸 도착 시 승리
@@ -1495,19 +1536,26 @@ class Game {
                 this.bypassLength = 0;
             }
             
-            this.updateBoard();
-            this.updateStatus();
+            // 슬라이딩 애니메이션 (이벤트 후)
+            this.animateBoardSlide(fromPos, this.position, true).then(() => {
+                this.updateBoard();
+                this.updateStatus();
+            });
             this.addLog('player', `${Math.abs(spaces)}칸 후퇴 → ${this.position}`);
             this.endTurn();
             return;
         }
         
+        const fromPos = this.position;
         this.position += spaces;
         const bypassEnd = 12 + this.bypassLength;
         
         // ===== 12칸 도착 승리 판정 =====
         if (this.position === 12 && !this.isInBypass) {
-            this.victory();
+            // 슬라이딩 애니메이션 후 승리
+            this.animateBoardSlide(fromPos, 12).then(() => {
+                this.victory();
+            });
             return;
         }
         
@@ -1518,8 +1566,12 @@ class Game {
             this.isInBypass = true;
             this.addLog('event', `🚧 우회 루트 ${this.bypassLength}칸 생성! (12→${12 + this.bypassLength}→12)`);
             this.addLog('event', `⚠️ 우회 루트 진입! (${this.position}칸)`);
-            this.updateBoard();
-            this.updateStatus();
+            
+            // 슬라이딩 애니메이션
+            this.animateBoardSlide(fromPos, this.position).then(() => {
+                this.updateBoard();
+                this.updateStatus();
+            });
             this.addLog('player', `${spaces}칸 → ${this.position}`);
             this.endTurn();
             return;
@@ -1540,7 +1592,9 @@ class Game {
                     this.addLog('event', '🔄 우회 루트 순환 완료!');
                     this.isInBypass = false;
                     this.bypassLength = 0;
-                    this.victory();
+                    this.animateBoardSlide(fromPos, 12).then(() => {
+                        this.victory();
+                    });
                     return;
                 }
                 
@@ -1556,14 +1610,19 @@ class Game {
                 this.bypassLength = 0;
                 if (this.position === 12) {
                     this.addLog('event', '🎉 12칸 도착!');
-                    this.victory();
+                    this.animateBoardSlide(fromPos, 12).then(() => {
+                        this.victory();
+                    });
                     return;
                 }
             }
         }
         
-        this.updateBoard();
-        this.updateStatus();
+        // 슬라이딩 애니메이션 후 보드 업데이트
+        this.animateBoardSlide(fromPos, this.position).then(() => {
+            this.updateBoard();
+            this.updateStatus();
+        });
         
         if (spaces > 0) this.addLog('player', `${spaces}칸 → ${this.position}`);
         else if (spaces < 0) this.addLog('player', `${Math.abs(spaces)}칸 후퇴 → ${this.position}`);

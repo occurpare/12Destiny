@@ -569,6 +569,86 @@ body {
 }
 
 /* ============================================ */
+/* 슬라이딩 애니메이션 */
+/* ============================================ */
+
+/* 칸 슬라이드 애니메이션 */
+.board-track.sliding-left {
+    animation: slideLeft 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.board-track.sliding-right {
+    animation: slideRight 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes slideLeft {
+    0% { transform: translateX(64px); opacity: 0.5; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideRight {
+    0% { transform: translateX(-64px); opacity: 0.5; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+/* 폰 점프 애니메이션 (이동 시) */
+.player-character.moving {
+    animation: playerJump 0.4s ease-out;
+}
+
+@keyframes playerJump {
+    0% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-20px) scale(1.1); }
+    60% { transform: translateY(-10px) scale(1.05); }
+    100% { transform: translateY(0) scale(1); }
+}
+
+/* 새 칸 등장 애니메이션 */
+.track-cell.entering {
+    animation: cellEnter 0.4s ease-out;
+}
+
+@keyframes cellEnter {
+    0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+    60% { transform: scale(1.1) rotate(3deg); opacity: 0.8; }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+/* 위치 숫자 변경 애니메이션 */
+.position-number.changing {
+    animation: numberChange 0.4s ease-out;
+}
+
+@keyframes numberChange {
+    0% { transform: scale(1.5); opacity: 0; }
+    50% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* 이벤트 후 이동 애니메이션 (더 역동적) */
+.board-track.event-move {
+    animation: eventSlide 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes eventSlide {
+    0% { transform: translateX(var(--slide-offset, 0)); opacity: 0.3; }
+    50% { transform: translateX(calc(var(--slide-offset, 0) * 0.3)); opacity: 0.7; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+/* 폰 스핀 애니메이션 (이벤트 후) */
+.player-character.event-moving {
+    animation: playerSpin 0.6s ease-out;
+}
+
+@keyframes playerSpin {
+    0% { transform: translateY(0) rotate(0deg); }
+    30% { transform: translateY(-25px) rotate(180deg); }
+    60% { transform: translateY(-10px) rotate(360deg); }
+    100% { transform: translateY(0) rotate(360deg); }
+}
+
+/* ============================================ */
 /* Active Effects */
 /* ============================================ */
 
