@@ -42,13 +42,13 @@ class Game {
     // ==================== 전략 카드 라이브러리 ====================
     getCardLibrary() {
         return [
-            // 🎲 주사위 카드 (4장) - 굴린 후 사용
+            // 🎲 주사위 카드 (4장) - 이벤트 발생 시 사용
             {
                 id: 'reroll',
                 name: '🎲 리롤',
                 icon: '🎲',
                 desc: '주사위 다시 굴리기',
-                timing: '주사위 굴린 후',
+                timing: '이벤트 발생 시',
                 type: 'dice',
                 effect: 'reroll'
             },
@@ -57,7 +57,7 @@ class Game {
                 name: '🎲 조작',
                 icon: '🎲',
                 desc: '주사위 값 ±1 조정',
-                timing: '주사위 굴린 후',
+                timing: '이벤트 발생 시',
                 type: 'dice',
                 effect: 'manipulate'
             },
@@ -75,7 +75,7 @@ class Game {
                 name: '🎲 복제',
                 icon: '🎲',
                 desc: '주사위 값만큼 추가 이동',
-                timing: '주사위 굴린 후',
+                timing: '이벤트 발생 시',
                 type: 'dice',
                 effect: 'duplicate'
             },
@@ -133,7 +133,7 @@ class Game {
                 name: '🍀 축복',
                 icon: '🍀',
                 desc: '이동 후 +1~2칸 추가',
-                timing: '이동 후',
+                timing: '이벤트 발생 시',
                 type: 'luck',
                 effect: 'bless'
             }
@@ -399,26 +399,6 @@ class Game {
                 this.useCard(cardUid);
             } else {
                 this.addLog('system', '⚠️ 주사위를 굴리기 전에만 사용할 수 있습니다.');
-            }
-            return;
-        }
-        
-        // 주사위 굴린 후 카드
-        if (timing === '주사위 굴린 후') {
-            if (this.lastDiceValue && !this.pendingEvent) {
-                this.useCard(cardUid);
-            } else {
-                this.addLog('system', '⚠️ 주사위를 굴린 후에 사용할 수 있습니다.');
-            }
-            return;
-        }
-        
-        // 이동 후 카드
-        if (timing === '이동 후') {
-            if (this.lastDiceValue && !this.pendingEvent) {
-                this.useCard(cardUid);
-            } else {
-                this.addLog('system', '⚠️ 이동 후에 사용할 수 있습니다.');
             }
             return;
         }
