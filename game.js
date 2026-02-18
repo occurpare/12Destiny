@@ -41,6 +41,7 @@ class Game {
             diceDisplay: document.getElementById('diceDisplay'),
             diceValue: document.getElementById('diceValue'),
             diceType: document.getElementById('diceType'),
+            diceInfo: document.getElementById('diceInfo'),
             logArea: document.getElementById('logArea'),
             eventArea: document.getElementById('eventArea'),
             eventContent: document.getElementById('eventContent'),
