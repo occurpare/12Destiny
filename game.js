@@ -1,4 +1,4 @@
-// 12 DICE - 100 Events Edition with Witty Dialogues
+// 12Destiny - 100 Events Edition with Witty Dialogues
 // 각 이밴트에 센스 있는 대사 추가
 
 class Game {
