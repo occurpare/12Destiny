@@ -26,11 +26,350 @@ class Game {
         // 지속 효과 추적
         this.activeEffects = []; // [{id, name, icon, turnsLeft, type}]
         
+        // 전략 카드 시스템
+        this.hand = []; // 손패 (최대 3장)
+        this.maxHandSize = 3;
+        this.pendingEvent = null; // 대기 중인 이벤트
+        this.cardUsedThisTurn = false; // 이번 턴 카드 사용 여부
+        
         this.elements = {};
         this.taps = 0;
         this.targetTaps = 0;
         
         this.init();
+    }
+    
+    // ==================== 전략 카드 라이브러리 ====================
+    getCardLibrary() {
+        return [
+            // 🎲 주사위 카드 (4장)
+            {
+                id: 'reroll',
+                name: '🎲 리롤',
+                icon: '🎲',
+                desc: '주사위 다시 굴리기',
+                type: 'dice',
+                effect: 'reroll'
+            },
+            {
+                id: 'manipulate',
+                name: '🎲 조작',
+                icon: '🎲',
+                desc: '주사위 값 ±1 조정',
+                type: 'dice',
+                effect: 'manipulate'
+            },
+            {
+                id: 'range',
+                name: '🎲 범위',
+                icon: '🎲',
+                desc: '다음 주사위 4~6만 나옴',
+                type: 'dice',
+                effect: 'range'
+            },
+            {
+                id: 'duplicate',
+                name: '🎲 복제',
+                icon: '🎲',
+                desc: '주사위 값만큼 추가 이동',
+                type: 'dice',
+                effect: 'duplicate'
+            },
+            
+            // 🛡️ 이벤트 방어 카드 (3장)
+            {
+                id: 'block',
+                name: '🛡️ 차단',
+                icon: '🛡️',
+                desc: '이번 이벤트 무시',
+                type: 'defense',
+                effect: 'block'
+            },
+            {
+                id: 'convert',
+                name: '🛡️ 전환',
+                icon: '🛡️',
+                desc: '부정→긍정 이벤트로 변경',
+                type: 'defense',
+                effect: 'convert'
+            },
+            {
+                id: 'reduce',
+                name: '🛡️ 감소',
+                icon: '🛡️',
+                desc: '이벤트 효과 절반으로 감소',
+                type: 'defense',
+                effect: 'reduce'
+            },
+            
+            // 🍀 운 강화 카드 (3장)
+            {
+                id: 'lucky',
+                name: '🍀 행운',
+                icon: '🍀',
+                desc: '다음 턴 긍정 이벤트 100%',
+                type: 'luck',
+                effect: 'lucky'
+            },
+            {
+                id: 'reverse',
+                name: '🍀 역전',
+                icon: '🍀',
+                desc: '후퇴→전진으로 변경',
+                type: 'luck',
+                effect: 'reverse'
+            },
+            {
+                id: 'bless',
+                name: '🍀 축복',
+                icon: '🍀',
+                desc: '이동 후 +1~2칸 추가',
+                type: 'luck',
+                effect: 'bless'
+            }
+        ];
+    }
+    
+    // 랜덤 카드 뽑기
+    drawCard() {
+        if (this.hand.length >= this.maxHandSize) return null;
+        
+        const library = this.getCardLibrary();
+        const card = library[this.r(0, library.length - 1)];
+        this.hand.push({ ...card, uid: Date.now() + Math.random() });
+        
+        this.updateHandUI();
+        return card;
+    }
+    
+    // 카드 사용
+    useCard(cardUid) {
+        const cardIndex = this.hand.findIndex(c => c.uid === cardUid);
+        if (cardIndex === -1) return false;
+        
+        const card = this.hand[cardIndex];
+        
+        // 카드 타입에 따른 효과 적용
+        switch (card.effect) {
+            case 'reroll':
+                // 주사위 다시 굴리기
+                this.addLog('event', `🎴 ${card.name} 사용! 주사위 다시 굴리기`);
+                this.cardUsedThisTurn = true;
+                this.hand.splice(cardIndex, 1);
+                this.updateHandUI();
+                this.rerollDice();
+                return true;
+                
+            case 'manipulate':
+                // 주사위 값 조정 (UI에서 선택)
+                this.addLog('event', `🎴 ${card.name} 사용! ±1 조정`);
+                this.cardUsedThisTurn = true;
+                this.hand.splice(cardIndex, 1);
+                this.updateHandUI();
+                this.showManipulateUI();
+                return true;
+                
+            case 'range':
+                // 다음 주사위 4~6
+                this.addLog('event', `🎴 ${card.name} 사용! 다음 주사위 4~6`);
+                this.forceDice = { min: 4, max: 6 };
+                this.cardUsedThisTurn = true;
+                this.hand.splice(cardIndex, 1);
+                this.updateHandUI();
+                return true;
+                
+            case 'duplicate':
+                // 주사위 값만큼 추가 이동
+                if (this.lastDiceValue) {
+                    this.addLog('event', `🎴 ${card.name} 사용! +${this.lastDiceValue}칸 이동`);
+                    this.cardUsedThisTurn = true;
+                    this.hand.splice(cardIndex, 1);
+                    this.updateHandUI();
+                    this.movePlayer(this.lastDiceValue);
+                }
+                return true;
+                
+            case 'block':
+                // 이벤트 무시
+                if (this.pendingEvent) {
+                    this.addLog('event', `🎴 ${card.name} 사용! 이벤트 무시!`);
+                    this.pendingEvent = null;
+                    this.cardUsedThisTurn = true;
+                    this.hand.splice(cardIndex, 1);
+                    this.updateHandUI();
+                    this.elements.eventArea.classList.add('hidden');
+                    this.endTurn();
+                }
+                return true;
+                
+            case 'convert':
+                // 부정→긍정 이벤트로 변경
+                if (this.pendingEvent) {
+                    this.addLog('event', `🎴 ${card.name} 사용! 이벤트 변경!`);
+                    this.cardUsedThisTurn = true;
+                    this.hand.splice(cardIndex, 1);
+                    this.updateHandUI();
+                    this.convertEventToPositive();
+                }
+                return true;
+                
+            case 'reduce':
+                // 이벤트 효과 절반
+                if (this.pendingEvent) {
+                    this.addLog('event', `🎴 ${card.name} 사용! 효과 절반!`);
+                    this.cardUsedThisTurn = true;
+                    this.hand.splice(cardIndex, 1);
+                    this.updateHandUI();
+                    this.reduceEventEffect();
+                }
+                return true;
+                
+            case 'lucky':
+                // 다음 턴 긍정 이벤트 100%
+                this.addLog('event', `🎴 ${card.name} 사용! 다음 턴 행운!`);
+                this.addActiveEffect('lucky', '🍀 행운', '🍀', 2, 'luck');
+                this.cardUsedThisTurn = true;
+                this.hand.splice(cardIndex, 1);
+                this.updateHandUI();
+                return true;
+                
+            case 'reverse':
+                // 후퇴→전진
+                this.activeEffects.push({ id: 'reverse', name: '🍀 역전', icon: '🍀', turnsLeft: 1, type: 'reverse' });
+                this.addLog('event', `🎴 ${card.name} 사용! 후퇴→전진`);
+                this.cardUsedThisTurn = true;
+                this.hand.splice(cardIndex, 1);
+                this.updateHandUI();
+                return true;
+                
+            case 'bless':
+                // 이동 후 +1~2칸
+                const bonus = this.r(1, 2);
+                this.addLog('event', `🎴 ${card.name} 사용! +${bonus}칸 추가!`);
+                this.cardUsedThisTurn = true;
+                this.hand.splice(cardIndex, 1);
+                this.updateHandUI();
+                this.movePlayer(bonus);
+                return true;
+        }
+        
+        return false;
+    }
+    
+    // 이벤트를 긍정으로 변경
+    convertEventToPositive() {
+        if (!this.pendingEvent) return;
+        
+        // 긍정 이벤트로 교체
+        const positiveEvents = this.getEventLibrary().positive;
+        const newEvent = positiveEvents[this.r(0, positiveEvents.length - 1)];
+        
+        // 기존 이벤트 닫기
+        this.elements.eventArea.classList.add('hidden');
+        
+        // 새 이벤트 실행
+        setTimeout(() => {
+            this.executeEvent(newEvent, this.lastDiceValue);
+        }, 300);
+    }
+    
+    // 이벤트 효과 절반
+    reduceEventEffect() {
+        if (!this.pendingEvent) return;
+        
+        // 효과 절반 플래그 설정 후 이벤트 적용
+        this.effectReducer = 0.5;
+        
+        // 기존 이벤트 닫기
+        this.elements.eventArea.classList.add('hidden');
+        
+        // 이벤트 다시 적용
+        setTimeout(() => {
+            this.executeEvent(this.pendingEvent, this.lastDiceValue);
+            this.effectReducer = null;
+        }, 300);
+    }
+    
+    // 주사위 다시 굴리기
+    rerollDice() {
+        this.isRolling = false;
+        this.elements.rollButton.disabled = false;
+        this.addLog('system', '주사위를 다시 굴리세요!');
+        // 주사위 굴리기 버튼 활성화
+        this.elements.rollButton.classList.add('pulse');
+    }
+    
+    // 주사위 조작 UI
+    showManipulateUI() {
+        const choiceArea = this.elements.choiceArea;
+        choiceArea.innerHTML = `
+            <div class="manipulate-ui">
+                <span>주사위 값 조정:</span>
+                <button class="choice-btn" onclick="game.applyManipulate(-1)">-1</button>
+                <span id="currentDiceVal">${this.lastDiceValue}</span>
+                <button class="choice-btn" onclick="game.applyManipulate(1)">+1</button>
+            </div>
+        `;
+        choiceArea.classList.remove('hidden');
+    }
+    
+    applyManipulate(delta) {
+        const newValue = Math.max(1, Math.min(6, this.lastDiceValue + delta));
+        this.lastDiceValue = newValue;
+        this.elements.diceValue.textContent = newValue;
+        this.elements.choiceArea.classList.add('hidden');
+        this.addLog('system', `주사위 값: ${newValue}`);
+        
+        // 이동 재계산
+        this.elements.eventArea.classList.add('hidden');
+        this.movePlayer(newValue);
+    }
+    
+    // 손패 UI 업데이트
+    updateHandUI() {
+        const handArea = document.getElementById('handArea');
+        if (!handArea) return;
+        
+        handArea.innerHTML = '';
+        
+        this.hand.forEach((card, index) => {
+            const cardEl = document.createElement('div');
+            cardEl.className = 'strategy-card';
+            cardEl.innerHTML = `
+                <div class="card-icon">${card.icon}</div>
+                <div class="card-name">${card.name}</div>
+                <div class="card-desc">${card.desc}</div>
+            `;
+            cardEl.onclick = () => this.onCardClick(card.uid);
+            handArea.appendChild(cardEl);
+        });
+        
+        // 손패 개수 표시
+        const handCount = document.getElementById('handCount');
+        if (handCount) {
+            handCount.textContent = `${this.hand.length}/${this.maxHandSize}`;
+        }
+    }
+    
+    // 카드 클릭 핸들러
+    onCardClick(cardUid) {
+        const card = this.hand.find(c => c.uid === cardUid);
+        if (!card) return;
+        
+        // 대기 중인 이벤트가 있으면 카드 사용 가능
+        if (this.pendingEvent) {
+            this.useCard(cardUid);
+        } else if (this.cardUsedThisTurn) {
+            this.addLog('system', '이번 턴에는 이미 카드를 사용했습니다.');
+        } else {
+            // 이벤트 없이도 사용 가능한 카드인지 확인
+            const noEventCards = ['range', 'lucky', 'reverse', 'bless', 'reroll'];
+            if (noEventCards.includes(card.effect)) {
+                this.useCard(cardUid);
+            } else {
+                this.addLog('system', '이벤트 발생 후에 사용할 수 있습니다.');
+            }
+        }
     }
     
     init() {
@@ -66,6 +405,10 @@ class Game {
         
         this.updateBoard();
         this.addLog('system', '"안녕! 5턴 안에 12칸 도달하면 승리야... 아, 참고로 난 친절하지 않아." 😈');
+        
+        // 게임 시작 시 카드 1장 지급
+        this.drawCard();
+        this.addLog('system', '🎴 전략 카드 1장을 받았습니다!');
     }
     
     // ==================== 이밴트 라이브러리 (100개 + 센스 대사) ====================
@@ -1130,6 +1473,7 @@ class Game {
             return;
         }
         
+        // 이벤트 효과 미리 계산
         const fxResult = event.fx(diceValue);
         console.log('fx 결과:', fxResult);
         
@@ -1138,10 +1482,82 @@ class Game {
             return;
         }
         
-        this.showEvent(event.icon, msg, () => {
-            const result = typeof event.fx === 'function' ? event.fx(diceValue) : event.fx;
-            this.applyResult(result, diceValue);
-        });
+        // 카드 사용 대기 상태로 이벤트 저장
+        this.pendingEvent = { event, diceValue, fxResult, msg };
+        
+        // 카드 사용 가능한 이벤트 팝업 표시
+        this.showEventWithCardOption(event, msg, fxResult);
+    }
+    
+    showEventWithCardOption(event, msg, fxResult) {
+        const typeClass = this.lastEventId ? this.getEventType(this.lastEventId) : 'neutral';
+        
+        // 이벤트 효과 미리보기
+        let effectPreview = '';
+        if (fxResult.bonus) effectPreview += `<div class="effect-preview positive">➕ ${fxResult.bonus}칸 전진</div>`;
+        if (fxResult.recoil) effectPreview += `<div class="effect-preview negative">➖ ${Math.abs(fxResult.recoil)}칸 후퇴</div>`;
+        if (fxResult.setPos !== undefined) effectPreview += `<div class="effect-preview neutral">📍 ${fxResult.setPos}칸으로 이동</div>`;
+        if (fxResult.extraRolls) effectPreview += `<div class="effect-preview positive">🎲 주사위 ${fxResult.extraRolls}회 추가</div>`;
+        
+        // 카드 사용 안내
+        const cardHint = this.hand.length > 0 ? 
+            `<div class="card-hint">🎴 카드를 사용하려면 아래 손패에서 클릭!</div>` : '';
+        
+        this.elements.eventContent.innerHTML = `
+            <div class="event-popup ${typeClass}">
+                <div class="event-header">
+                    <span class="event-icon-large">${event.icon}</span>
+                </div>
+                <div class="event-message-large">${msg}</div>
+                ${effectPreview}
+                ${cardHint}
+                <button class="event-confirm-btn" id="eventConfirmBtn">✅ 확인</button>
+            </div>
+        `;
+        this.elements.tapArea.classList.add('hidden');
+        this.elements.choiceArea.classList.add('hidden');
+        this.elements.eventArea.classList.remove('hidden');
+        this.elements.eventArea.classList.add('event-active');
+        
+        // 손패 하이라이트
+        this.highlightHand(true);
+        
+        // 확인 버튼 클릭 시 진행
+        const confirmBtn = document.getElementById('eventConfirmBtn');
+        confirmBtn.onclick = () => {
+            this.highlightHand(false);
+            this.elements.eventArea.classList.add('hidden');
+            this.elements.eventArea.classList.remove('event-active');
+            this.applyEventResult();
+        };
+        
+        // 이벤트 영역 클릭으로도 가능
+        this.elements.eventArea.onclick = (e) => {
+            if (e.target === this.elements.eventArea || e.target.classList.contains('event-popup')) {
+                confirmBtn.click();
+            }
+        };
+    }
+    
+    // 저장된 이벤트 결과 적용
+    applyEventResult() {
+        if (!this.pendingEvent) return;
+        
+        const { fxResult, diceValue } = this.pendingEvent;
+        this.pendingEvent = null;
+        this.applyResult(fxResult, diceValue);
+    }
+    
+    // 손패 하이라이트
+    highlightHand(active) {
+        const handArea = document.getElementById('handArea');
+        if (!handArea) return;
+        
+        if (active) {
+            handArea.classList.add('highlight');
+        } else {
+            handArea.classList.remove('highlight');
+        }
     }
     
     showChoices(event, diceValue, msg) {
@@ -1720,11 +2136,22 @@ class Game {
         // 지속 효과 턴 감소
         this.tickActiveEffects();
         
+        // 카드 사용 플래그 리셋
+        this.cardUsedThisTurn = false;
+        
         this.turn++;
         if (this.turn > this.maxTurns) { this.defeat(); return; }
         this.updateStatus();
         this.isRolling = false;
         this.elements.rollButton.disabled = false;
+        
+        // 턴마다 카드 1장 뽑기
+        if (this.hand.length < this.maxHandSize) {
+            const drawn = this.drawCard();
+            if (drawn) {
+                this.addLog('system', `🎴 ${drawn.name} 카드를 뽑았습니다!`);
+            }
+        }
         
         // 다음 턴 예고
         this.showNextTurnPreview();
@@ -2039,6 +2466,11 @@ class Game {
         this.currentDice = { min:1, max:6, name:'기본 주사위', type:'normal', values:null };
         this.forceDice = null;
         
+        // 카드 시스템 초기화
+        this.hand = [];
+        this.pendingEvent = null;
+        this.cardUsedThisTurn = false;
+        
         this.elements.resultScreen.classList.add('hidden');
         this.elements.eventArea.classList.add('hidden');
         this.elements.logArea.innerHTML = '';
@@ -2047,8 +2479,13 @@ class Game {
         this.updateBoard();
         this.updateStatus();
         this.updateDiceInfo();
+        this.updateHandUI();
+        
+        // 시작 카드 지급
+        this.drawCard();
         
         this.addLog('system', '"다시 시작? 좋아. 이번엔 조심해." 😈');
+        this.addLog('system', '🎴 전략 카드 1장을 받았습니다!');
     }
     
     // ==================== UI ====================
